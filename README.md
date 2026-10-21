@@ -10,7 +10,7 @@
   [![Versión: 0.4.1](https://img.shields.io/badge/versión-0.4.1-F4F0DB?style=flat-square&labelColor=17242A)](https://github.com/PullAngel/mise-cocina/releases/latest)
 </div>
 
-![Vista de Mise Cocina](website/assets/product-preview.svg)
+![Vista de Mise Cocina](website/assets/product-preview.png)
 
 ## Qué es
 
