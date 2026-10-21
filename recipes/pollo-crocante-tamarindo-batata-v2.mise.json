@@ -1,0 +1,368 @@
+{
+  "format": "mise.recipe",
+  "version": "1.1",
+  "recipeId": "pollo-crocante-tamarindo-batata-v2",
+  "revision": 2,
+  "locale": "es-AR",
+  "title": "Pollo crocante de tamarindo con batata dorada",
+  "servings": {
+    "count": 2,
+    "note": "Dos porciones abundantes"
+  },
+  "context": {
+    "goal": "Conseguir pollo jugoso y muy crocante, batata dorada y suficiente salsa de tamarindo fluida para servir aparte.",
+    "equipment": ["horno", "olla", "colador", "sartén profunda", "sartén pequeña o sartén limpia", "rejilla o papel absorbente", "bowls"],
+    "constraints": ["No empapar el pollo con salsa", "No reducir la salsa hasta volverla oscura o pegajosa"],
+    "dietary": [],
+    "availableIngredients": [],
+    "decisions": [
+      "Usar batata como acompañamiento dulce y cremoso.",
+      "Preparar la mezcla líquida antes de freír el pollo.",
+      "Agregar maicena a la salsa solamente si sigue acuosa.",
+      "Barnizar el pollo con una parte de la salsa y servir el resto en la mesa.",
+      "No usar aceite de sésamo para conservar claros los aromas de tamarindo, jengibre y ajo."
+    ],
+    "uncertainties": [
+      "La acidez de la pasta de tamarindo y la salinidad de la soja pueden variar; hay que probar antes de espesar.",
+      "La cantidad exacta de aceite de fritura depende del diámetro de la sartén."
+    ]
+  },
+  "ingredients": [
+    { "id": "chicken", "name": "suprema de pollo", "amount": { "min": 650, "max": 700, "unit": "g" }, "scaling": "linear", "kind": "protein" },
+    { "id": "cornstarch-coating", "name": "maicena para el rebozado", "amount": { "value": 70, "unit": "g" }, "scaling": "linear", "kind": "grain" },
+    { "id": "self-rising-flour", "name": "harina leudante", "amount": { "value": 35, "unit": "g" }, "scaling": "linear", "kind": "grain" },
+    { "id": "salt", "name": "sal", "amount": { "text": "¾ cdta para el pollo, más lo necesario para la batata" }, "scaling": "to-taste", "kind": "seasoning" },
+    { "id": "pepper", "name": "pimienta", "amount": { "text": "a gusto" }, "scaling": "to-taste", "kind": "seasoning" },
+    { "id": "frying-oil", "name": "aceite neutro para freír", "amount": { "text": "hasta formar 0,5–1 cm en la sartén" }, "scaling": "batch", "scalingNote": "La cantidad depende del diámetro de la sartén; mantener el nivel entre tandas.", "kind": "fat" },
+    { "id": "tamarind", "name": "pasta de tamarindo", "amount": { "value": 3, "unit": "cda" }, "scaling": "linear", "scalingNote": "Reservar hasta ½ cda adicional para corregir una salsa demasiado dulce.", "kind": "liquid" },
+    { "id": "honey", "name": "miel", "amount": { "value": 2.5, "unit": "cda" }, "scaling": "linear", "scalingNote": "Reservar ½ cdta adicional para corregir acidez excesiva.", "kind": "liquid" },
+    { "id": "soy-sauce", "name": "salsa de soja", "amount": { "value": 2, "unit": "cda" }, "scaling": "linear", "scalingNote": "Reservar ½ cdta adicional por si falta profundidad.", "kind": "liquid" },
+    { "id": "sauce-water", "name": "agua para la salsa", "amount": { "value": 150, "unit": "ml" }, "scaling": "linear", "scalingNote": "Tener agua caliente adicional para rescatar o ajustar la salsa.", "kind": "liquid" },
+    { "id": "garlic", "name": "ajo", "amount": { "value": 2, "unit": "dientes" }, "scaling": "linear", "kind": "vegetable" },
+    { "id": "ginger", "name": "jengibre fresco rallado", "amount": { "value": 2, "unit": "cdta" }, "scaling": "linear", "kind": "vegetable" },
+    { "id": "chile", "name": "ají o chile", "amount": { "text": "a gusto" }, "optional": true, "scaling": "to-taste", "kind": "seasoning" },
+    { "id": "cornstarch-sauce", "name": "maicena para la salsa", "amount": { "value": 0.5, "unit": "cdta" }, "optional": true, "scaling": "linear", "scalingNote": "Mezclar con 1 cda de agua fría y usar solo si hace falta.", "kind": "grain" },
+    { "id": "sweet-potato", "name": "batata grande", "amount": { "value": 1, "unit": "unidad" }, "scaling": "linear", "kind": "vegetable" },
+    { "id": "sweet-potato-oil", "name": "aceite para la batata", "amount": { "min": 1, "max": 1.5, "unit": "cda" }, "scaling": "linear", "kind": "fat" },
+    { "id": "paprika", "name": "pimentón", "amount": { "value": 0.5, "unit": "cdta" }, "optional": true, "scaling": "linear", "kind": "seasoning" },
+    { "id": "scallion", "name": "verdeo", "amount": { "text": "un poco, cortado fino" }, "optional": true, "scaling": "to-taste", "kind": "vegetable" },
+    { "id": "sesame", "name": "semillas de sésamo", "amount": { "text": "un poco" }, "optional": true, "scaling": "to-taste", "kind": "seasoning" }
+  ],
+  "components": [
+    { "id": "sweet-potato-component", "title": "Batata", "preferredStation": "olla y horno", "hold": { "mode": "horno apagado con puerta entreabierta", "qualityWindowMinutes": 10 } },
+    { "id": "sauce-component", "title": "Salsa de tamarindo", "preferredStation": "jarra y sartén pequeña" },
+    { "id": "chicken-component", "title": "Pollo crocante", "preferredStation": "sartén profunda", "hold": { "mode": "rejilla, sin apilar", "qualityWindowMinutes": 8 } },
+    { "id": "finish-component", "title": "Terminación", "preferredStation": "bowl y platos" }
+  ],
+  "steps": [
+    {
+      "id": "parboil-sweet-potato",
+      "componentId": "sweet-potato-component",
+      "shortLabel": "Precocer batata",
+      "action": "Lavá la batata, dejale la piel, cortala en gajos de 2,5–3 cm y hervila desde agua fría con sal.",
+      "amounts": [
+        { "ingredientId": "sweet-potato", "value": 1, "unit": "unidad" },
+        { "ingredientId": "salt", "value": 0, "unit": "a gusto" }
+      ],
+      "heat": "alto hasta hervir; luego medio",
+      "startWhen": "La batata está cortada en gajos parejos y cubierta con agua fría.",
+      "doneWhen": [
+        { "sense": "texture", "cue": "El cuchillo entra, pero todavía encuentra resistencia en el centro." },
+        { "sense": "time", "cue": "Pasaron aproximadamente 6–9 minutos desde que rompió hervor." }
+      ],
+      "timer": { "label": "Precocción de la batata", "durationSeconds": 420, "startTrigger": "user-confirmed" },
+      "dependsOn": [],
+      "canRunWith": ["mix-sauce-base", "prepare-aromatics"],
+      "avoid": ["Cocinar la batata por completo en el agua; se rompería antes de dorarse."],
+      "rescues": [
+        { "when": "Los gajos ya están muy blandos", "do": "Escurrilos con cuidado, no los sacudas y acortá el horno; manipulalos una sola vez." }
+      ],
+      "voice": "Herví los gajos hasta que el cuchillo entre con resistencia en el centro."
+    },
+    {
+      "id": "dry-sweet-potato",
+      "componentId": "sweet-potato-component",
+      "shortLabel": "Secar batata",
+      "action": "Escurrí los gajos y dejalos cinco minutos en el colador, sin tocarlos, para eliminar vapor superficial.",
+      "amounts": [{ "ingredientId": "sweet-potato", "value": 1, "unit": "unidad" }],
+      "startWhen": "La batata alcanzó el punto de precocción.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "La superficie se ve mate y ya no despide vapor abundante." },
+        { "sense": "time", "cue": "Reposó cinco minutos." }
+      ],
+      "timer": { "label": "Secado de la batata", "durationSeconds": 300, "startTrigger": "user-confirmed" },
+      "dependsOn": ["parboil-sweet-potato"],
+      "canRunWith": ["mix-sauce-base", "prepare-aromatics"],
+      "avoid": ["Sacudir o mezclar los gajos calientes; pueden quebrarse."],
+      "rescues": [],
+      "voice": "Dejá la batata cinco minutos quieta en el colador para que pierda vapor."
+    },
+    {
+      "id": "roast-sweet-potato",
+      "componentId": "sweet-potato-component",
+      "shortLabel": "Dorar batata",
+      "action": "Mezclá los gajos con aceite, pimienta, poca sal y pimentón opcional; separalos con una cara plana contra la fuente y horneá, girando una sola vez.",
+      "amounts": [
+        { "ingredientId": "sweet-potato", "value": 1, "unit": "unidad" },
+        { "ingredientId": "sweet-potato-oil", "value": 1.25, "unit": "cda" },
+        { "ingredientId": "salt", "value": 0, "unit": "a gusto" },
+        { "ingredientId": "pepper", "value": 0, "unit": "a gusto" },
+        { "ingredientId": "paprika", "value": 0.5, "unit": "cdta" }
+      ],
+      "heat": "horno a 220–230 °C",
+      "startWhen": "El horno está bien caliente y la superficie de la batata está seca.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "Las caras planas están profundamente doradas y los bordes tostados." },
+        { "sense": "texture", "cue": "El exterior ofrece resistencia y el centro sigue cremoso." }
+      ],
+      "timer": { "label": "Batata en el horno", "durationSeconds": 1500, "startTrigger": "user-confirmed" },
+      "dependsOn": ["dry-sweet-potato"],
+      "canRunWith": ["mix-sauce-base", "prepare-aromatics", "cut-season-chicken", "coat-chicken", "first-fry"],
+      "avoid": ["Amontonar los gajos", "Agregar miel: la batata ya aporta dulzor y la miel se quemaría."],
+      "rescues": [
+        { "when": "Se doran demasiado antes de estar cremosos", "do": "Bajá el horno a 200 °C y terminá la cocción sin volver a girarlos." }
+      ],
+      "voice": "Horneá los gajos separados y giralos una sola vez cuando la primera cara esté bien dorada."
+    },
+    {
+      "id": "mix-sauce-base",
+      "componentId": "sauce-component",
+      "shortLabel": "Mezclar salsa",
+      "action": "Mezclá tamarindo, miel, soja y agua en una jarra; probá la mezcla antes de cocinarla.",
+      "amounts": [
+        { "ingredientId": "tamarind", "value": 3, "unit": "cda" },
+        { "ingredientId": "honey", "value": 2.5, "unit": "cda" },
+        { "ingredientId": "soy-sauce", "value": 2, "unit": "cda" },
+        { "ingredientId": "sauce-water", "value": 150, "unit": "ml" }
+      ],
+      "startWhen": "Podés trabajar sin descuidar la batata.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "La mezcla es uniforme." },
+        { "sense": "taste", "cue": "Se percibe ácida primero, levemente dulce después y salada al fondo." }
+      ],
+      "dependsOn": [],
+      "canRunWith": ["parboil-sweet-potato", "dry-sweet-potato", "roast-sweet-potato"],
+      "avoid": ["Agregar ahora la maicena destinada a espesar."],
+      "rescues": [
+        { "when": "Parece demasiado intensa", "do": "Recordá que todavía se cocinará y se usará sobre pollo y batata; ajustá definitivamente después de hervirla." }
+      ],
+      "voice": "Mezclá tamarindo, miel, soja y agua. Todavía no agregues maicena."
+    },
+    {
+      "id": "prepare-aromatics",
+      "componentId": "sauce-component",
+      "shortLabel": "Preparar aromáticos",
+      "action": "Rallá o picá muy fino el ajo y rallá el jengibre; dejalos juntos y listos junto a la mezcla líquida.",
+      "amounts": [
+        { "ingredientId": "garlic", "value": 2, "unit": "dientes" },
+        { "ingredientId": "ginger", "value": 2, "unit": "cdta" },
+        { "ingredientId": "chile", "value": 0, "unit": "a gusto" }
+      ],
+      "startWhen": "La mezcla líquida está lista o la batata está en una espera segura.",
+      "doneWhen": [{ "sense": "visual", "cue": "Ajo, jengibre y salsa están medidos y al alcance de la sartén." }],
+      "dependsOn": [],
+      "canRunWith": ["parboil-sweet-potato", "dry-sweet-potato", "roast-sweet-potato"],
+      "avoid": ["Dejar esta preparación para cuando la sartén ya esté caliente."],
+      "rescues": [],
+      "voice": "Dejá ajo, jengibre y salsa medidos antes de empezar a freír."
+    },
+    {
+      "id": "cut-season-chicken",
+      "componentId": "chicken-component",
+      "shortLabel": "Cortar pollo",
+      "action": "Cortá el pollo en piezas de 3–4 cm, agregá sal y pimienta y mezclá; debe quedar apenas húmedo, sin líquido acumulado.",
+      "amounts": [
+        { "ingredientId": "chicken", "value": 675, "unit": "g" },
+        { "ingredientId": "salt", "value": 0.75, "unit": "cdta" },
+        { "ingredientId": "pepper", "value": 0, "unit": "a gusto" }
+      ],
+      "startWhen": "La salsa y los aromáticos están preparados y la batata puede seguir en el horno.",
+      "doneWhen": [{ "sense": "visual", "cue": "Las piezas son parejas, de 3–4 cm, y su superficie está ligeramente húmeda pero no chorreando." }],
+      "dependsOn": ["mix-sauce-base", "prepare-aromatics"],
+      "canRunWith": ["roast-sweet-potato"],
+      "avoid": ["Hacer cubitos pequeños: se secan antes de formar una buena cobertura."],
+      "rescues": [
+        { "when": "Hay líquido en el fondo del bowl", "do": "Secá ligeramente el pollo antes de rebozarlo para que la mezcla no se vuelva una pasta uniforme." }
+      ],
+      "voice": "Cortá piezas de tres a cuatro centímetros y comprobá que estén apenas húmedas."
+    },
+    {
+      "id": "coat-chicken",
+      "componentId": "chicken-component",
+      "shortLabel": "Formar escamas",
+      "action": "Mezclá maicena y harina, presioná la mezcla seca contra el pollo, reposá cinco minutos y terminá con otro poco de mezcla seca para formar grumos irregulares.",
+      "amounts": [
+        { "ingredientId": "cornstarch-coating", "value": 70, "unit": "g" },
+        { "ingredientId": "self-rising-flour", "value": 35, "unit": "g" },
+        { "ingredientId": "chicken", "value": 675, "unit": "g" }
+      ],
+      "startWhen": "El pollo está cortado, condimentado y apenas húmedo.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "La cobertura tiene polvo, pequeñas zonas húmedas y grumos adheridos." },
+        { "sense": "texture", "cue": "Al presionar aparecen relieves y escamas, no una capa lisa." }
+      ],
+      "timer": { "label": "Reposo del rebozado", "durationSeconds": 300, "startTrigger": "user-confirmed" },
+      "dependsOn": ["cut-season-chicken"],
+      "canRunWith": ["roast-sweet-potato"],
+      "avoid": ["Alisar el rebozado como una milanesa", "Agregar huevo."],
+      "rescues": [
+        { "when": "La cobertura quedó pastosa y uniforme", "do": "Espolvoreá mezcla seca y presioná sin volver a revolver enérgicamente." }
+      ],
+      "voice": "Presioná el rebozado para formar pequeños grumos y dejalo reposar cinco minutos."
+    },
+    {
+      "id": "first-fry",
+      "componentId": "chicken-component",
+      "shortLabel": "Freír en tandas",
+      "action": "Calentá 0,5–1 cm de aceite y freí el pollo en 2–3 tandas sin amontonar: 2–3 minutos por lado y luego solo lo necesario para un dorado intenso.",
+      "amounts": [
+        { "ingredientId": "chicken", "value": 675, "unit": "g" },
+        { "ingredientId": "frying-oil", "value": 0, "unit": "nivel de 0,5–1 cm" }
+      ],
+      "heat": "medio-alto",
+      "startWhen": "Una miguita de rebozado burbujea de inmediato sin oscurecerse en cinco segundos.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "La cobertura está dorada intensa y seca, sin zonas blancas húmedas." },
+        { "sense": "sound", "cue": "El burbujeo disminuye alrededor de cada pieza." },
+        { "sense": "temperature", "cue": "El centro del pollo alcanza una cocción segura." }
+      ],
+      "timer": { "label": "Cara de una tanda", "durationSeconds": 150, "startTrigger": "user-confirmed" },
+      "dependsOn": ["coat-chicken"],
+      "canRunWith": ["roast-sweet-potato"],
+      "avoid": ["Amontonar las piezas", "Apilar el pollo recién frito", "Usar aceite que oscurece el rebozado en pocos segundos."],
+      "rescues": [
+        { "when": "El rebozado se oscurece en menos de cinco segundos", "do": "Bajá el fuego y esperá un momento antes de cargar la tanda." },
+        { "when": "El aceite deja de burbujear al cargar", "do": "Retirá algunas piezas y recuperá temperatura antes de continuar." }
+      ],
+      "voice": "Freí en tandas separadas. Dos a tres minutos por lado y después guiáte por el dorado."
+    },
+    {
+      "id": "second-fry",
+      "componentId": "chicken-component",
+      "shortLabel": "Segunda fritura",
+      "action": "Dejá recuperar temperatura al aceite y devolvé cada tanda durante 30–45 segundos; escurrí sobre rejilla sin apilar.",
+      "amounts": [
+        { "ingredientId": "chicken", "value": 675, "unit": "g" },
+        { "ingredientId": "frying-oil", "value": 0, "unit": "mismo aceite" }
+      ],
+      "heat": "medio-alto",
+      "startWhen": "Todas las tandas completaron la primera fritura y el aceite volvió a burbujear vivamente.",
+      "doneWhen": [
+        { "sense": "texture", "cue": "La cobertura se siente seca y quebradiza." },
+        { "sense": "sound", "cue": "Al apoyar una pieza se percibe un roce crujiente." }
+      ],
+      "timer": { "label": "Segunda fritura de una tanda", "durationSeconds": 40, "startTrigger": "user-confirmed" },
+      "dependsOn": ["first-fry"],
+      "canRunWith": ["roast-sweet-potato"],
+      "avoid": ["Prolongar la segunda fritura hasta secar el pollo."],
+      "rescues": [
+        { "when": "El pollo ya está muy oscuro", "do": "Omití la segunda fritura de esas piezas y mantenelas separadas sobre rejilla." }
+      ],
+      "voice": "Hacé una segunda fritura de treinta a cuarenta y cinco segundos y no apiles las piezas."
+    },
+    {
+      "id": "cook-sauce",
+      "componentId": "sauce-component",
+      "shortLabel": "Cocinar salsa",
+      "action": "En una sartén limpia con una película de aceite, cociná ajo y jengibre 20 segundos; agregá la mezcla líquida, llevá a burbujeo y cociná solo dos minutos a medio-bajo.",
+      "amounts": [
+        { "ingredientId": "garlic", "value": 2, "unit": "dientes" },
+        { "ingredientId": "ginger", "value": 2, "unit": "cdta" },
+        { "ingredientId": "tamarind", "value": 3, "unit": "cda" },
+        { "ingredientId": "honey", "value": 2.5, "unit": "cda" },
+        { "ingredientId": "soy-sauce", "value": 2, "unit": "cda" },
+        { "ingredientId": "sauce-water", "value": 150, "unit": "ml" }
+      ],
+      "heat": "medio-bajo; medio hasta burbujear; luego medio-bajo",
+      "startWhen": "El pollo terminó la segunda fritura y reposa separado; la mezcla líquida está a mano.",
+      "doneWhen": [
+        { "sense": "time", "cue": "La salsa burbujeó suavemente durante unos dos minutos." },
+        { "sense": "visual", "cue": "Sigue viéndose más líquida que un glaseado y conserva un color vivo." },
+        { "sense": "smell", "cue": "Ajo y jengibre huelen frescos, no tostados." }
+      ],
+      "timer": { "label": "Cocción breve de la salsa", "durationSeconds": 120, "startTrigger": "user-confirmed" },
+      "dependsOn": ["second-fry", "mix-sauce-base", "prepare-aromatics"],
+      "canRunWith": ["roast-sweet-potato"],
+      "avoid": ["Dorar el ajo o el jengibre", "Reducir hasta que la salsa espese por evaporación."],
+      "rescues": [
+        { "when": "Empieza a pegarse o huele tostada", "do": "Agregá de inmediato 2–3 cucharadas de agua, remové y bajá el fuego al mínimo." },
+        { "when": "Quedó demasiado ácida", "do": "Agregá ½ cdta de miel." },
+        { "when": "Quedó demasiado dulce", "do": "Agregá ½ cda de tamarindo y 1 cda de agua." },
+        { "when": "Quedó demasiado salada", "do": "Agregá 2–3 cucharadas de agua." },
+        { "when": "Le falta profundidad", "do": "Agregá ½ cdta de salsa de soja." }
+      ],
+      "voice": "Cociná la salsa solo dos minutos. Debe seguir fluida y conservar un color vivo."
+    },
+    {
+      "id": "adjust-thickness",
+      "componentId": "sauce-component",
+      "shortLabel": "Ajustar espesor",
+      "action": "Solo si la salsa sigue como agua, mezclá media cucharadita de maicena con una cucharada de agua fría; agregá primero la mitad, revolvé 15–20 segundos y evaluá antes de usar el resto.",
+      "amounts": [{ "ingredientId": "cornstarch-sauce", "value": 0.5, "unit": "cdta" }],
+      "heat": "burbujeo suave y luego apagado",
+      "startWhen": "La salsa ya fue cocinada, probada y ajustada de sabor.",
+      "doneWhen": [
+        { "sense": "texture", "cue": "Cubre el dorso de una cuchara pero todavía corre." },
+        { "sense": "visual", "cue": "Está brillante, fluida y ligeramente espesa; aún no parece un glaseado terminado." }
+      ],
+      "timer": { "label": "Respuesta de la maicena", "durationSeconds": 20, "startTrigger": "user-confirmed" },
+      "dependsOn": ["cook-sauce"],
+      "canRunWith": [],
+      "avoid": ["Agregar toda la suspensión de maicena de una vez", "Esperar a que parezca completamente espesa antes de apagar."],
+      "rescues": [
+        { "when": "Se volvió pegajosa o parece caramelo oscuro", "do": "Retirala del fuego, agregá agua de a una cucharada y mezclá hasta recuperar fluidez." },
+        { "when": "Cubre la cuchara y todavía corre después de usar media suspensión", "do": "No agregues el resto: el calor residual y el enfriamiento terminarán de espesarla." }
+      ],
+      "voice": "Agregá solo media suspensión, esperá veinte segundos y apagá cuando cubra la cuchara pero todavía corra."
+    },
+    {
+      "id": "lightly-sauce-chicken",
+      "componentId": "finish-component",
+      "shortLabel": "Barnizar pollo",
+      "action": "Poné un tercio de la salsa en un bowl, agregá el pollo y mezclá rápidamente 10–15 segundos; sumá salsa de a cucharadas solo hasta barnizar.",
+      "amounts": [{ "ingredientId": "chicken", "value": 675, "unit": "g" }],
+      "startWhen": "El pollo está crocante y la salsa apagada conserva fluidez.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "Cada pieza tiene una película brillante y todavía se ven relieves secos del rebozado." },
+        { "sense": "texture", "cue": "El pollo está barnizado, no empapado." }
+      ],
+      "timer": { "label": "Barnizado rápido", "durationSeconds": 15, "startTrigger": "user-confirmed" },
+      "dependsOn": ["second-fry", "adjust-thickness"],
+      "canRunWith": [],
+      "avoid": ["Volcar toda la salsa sobre el pollo", "Dejar el pollo reposando dentro del bowl con salsa."],
+      "rescues": [
+        { "when": "El pollo empieza a perder crocante", "do": "Dejá de mezclar, pasalo inmediatamente a los platos y serví el resto de la salsa aparte." }
+      ],
+      "voice": "Usá solo un tercio de la salsa y mezclá hasta barnizar, no hasta empapar."
+    },
+    {
+      "id": "plate-and-finish",
+      "componentId": "finish-component",
+      "shortLabel": "Servir",
+      "action": "Serví batata, pollo barnizado y un poco de salsa; llevá el resto de la salsa a la mesa. Terminá con verdeo crudo, sésamo tostado y chile si los usás.",
+      "amounts": [
+        { "ingredientId": "scallion", "value": 0, "unit": "a gusto" },
+        { "ingredientId": "sesame", "value": 0, "unit": "a gusto" },
+        { "ingredientId": "chile", "value": 0, "unit": "a gusto" }
+      ],
+      "startWhen": "La batata está dorada y el pollo acaba de ser barnizado.",
+      "doneWhen": [
+        { "sense": "visual", "cue": "Queda una cantidad apreciable de salsa en el recipiente para llevar a la mesa." },
+        { "sense": "texture", "cue": "El bocado combina cobertura quebradiza, pollo jugoso y batata cremosa." },
+        { "sense": "taste", "cue": "Primero aparece tamarindo ácido y frutal; después miel, jengibre y ajo." }
+      ],
+      "dependsOn": ["roast-sweet-potato", "lightly-sauce-chicken"],
+      "canRunWith": [],
+      "avoid": ["Cubrir toda la batata con salsa antes de servir", "Agregar aceite de sésamo: ocultaría los aromas principales."],
+      "rescues": [
+        { "when": "La salsa se espesó mientras esperabas", "do": "Aflojala fuera del fuego con una cucharada de agua caliente antes de servir." }
+      ],
+      "voice": "Serví la batata y el pollo, y llevá el resto de la salsa a la mesa."
+    }
+  ],
+  "finish": {
+    "storage": "Guardá pollo, batata y salsa en recipientes separados para conservar mejor las texturas.",
+    "reheat": "Recalentá pollo y batata en horno o air fryer; calentá la salsa aparte a fuego bajo con una cucharada de agua si está espesa."
+  }
+}
+

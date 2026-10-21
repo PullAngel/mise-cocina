@@ -1,0 +1,30 @@
+name: Proponer una mejora
+description: Explicá una necesidad real antes de proponer una función.
+title: "[Idea]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: situation
+    attributes:
+      label: Situación de cocina
+      description: ¿Qué estabas intentando hacer y dónde se vuelve incómodo?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Resultado deseado
+      description: Describí la mejora para la persona, sin depender de una implementación concreta.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta opcional
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Alcance
+      options:
+        - label: Revisé el roadmap y no encontré esta necesidad.
+          required: true

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Vista previa de Mise Cocina</title>
+  <desc id="desc">Interfaz horizontal con recorrido, paso de receta, ingredientes y temporizador.</desc>
+  <rect width="1200" height="630" fill="#fff6d8"/>
+  <rect x="32" y="28" width="1136" height="574" rx="30" fill="#d8e7d2" stroke="#17242a" stroke-width="8"/>
+  <rect x="32" y="28" width="1136" height="72" rx="25" fill="#17242a"/>
+  <path d="M72 48c12-4 22 4 22 17 0 8-2 18-5 27l-22-3 5-41Z" fill="#ff6542"/>
+  <text x="108" y="77" fill="#fff6d8" font-family="Arial Black, sans-serif" font-size="36">MISE</text>
+  <text x="1030" y="72" fill="#fff6d8" font-family="monospace" font-size="20">19:24 · 72%</text>
+  <rect x="32" y="100" width="344" height="502" fill="#d8e7d2"/>
+  <line x1="376" y1="100" x2="376" y2="602" stroke="#17242a" stroke-width="8"/>
+  <path d="M65 132h223l24 72H82Z" fill="#2ea6a2" stroke="#17242a" stroke-width="5"/>
+  <text x="88" y="182" fill="#fff6d8" font-family="Arial Black, sans-serif" font-size="32">RECORRIDO</text>
+  <g font-family="monospace">
+    <rect x="65" y="230" width="278" height="88" rx="20" fill="#2f7651" stroke="#17242a" stroke-width="5"/>
+    <text x="88" y="280" fill="#f7c943" font-size="24" font-weight="bold">01</text>
+    <text x="140" y="270" fill="#fff6d8" font-size="16" font-weight="bold">PREPARAR SALSA</text>
+    <text x="303" y="280" fill="#fff6d8" font-size="24">✓</text>
+    <rect x="65" y="342" width="278" height="88" rx="20" fill="#2ea6a2" stroke="#17242a" stroke-width="5"/>
+    <rect x="76" y="353" width="278" height="88" rx="20" fill="none" stroke="#17242a" stroke-width="6"/>
+    <text x="88" y="392" fill="#f7c943" font-size="24" font-weight="bold">02</text>
+    <text x="140" y="382" fill="#17242a" font-size="16" font-weight="bold">DORAR POLLO</text>
+    <text x="303" y="392" fill="#17242a" font-size="24">○</text>
+    <rect x="65" y="454" width="278" height="88" rx="20" fill="#fff6d8" stroke="#17242a" stroke-width="5"/>
+    <text x="88" y="504" fill="#ff6542" font-size="24" font-weight="bold">03</text>
+    <text x="140" y="494" fill="#17242a" font-size="16" font-weight="bold">LACAR</text>
+  </g>
+  <rect x="376" y="100" width="792" height="502" fill="#fff6d8"/>
+  <rect x="411" y="130" width="15" height="316" fill="#ba4b36"/>
+  <text x="451" y="171" fill="#ff6542" font-family="Arial Black, sans-serif" font-size="34">02</text>
+  <rect x="516" y="136" width="110" height="45" rx="10" fill="#fff6d8" stroke="#17242a" stroke-width="4"/>
+  <text x="545" y="166" fill="#2f7651" font-family="monospace" font-size="16">POLLO</text>
+  <rect x="964" y="130" width="162" height="58" rx="13" fill="#ff6542" stroke="#17242a" stroke-width="5"/>
+  <rect x="974" y="140" width="162" height="58" rx="13" fill="none" stroke="#17242a" stroke-width="7"/>
+  <text x="997" y="168" fill="#fff6d8" font-family="Arial Black, sans-serif" font-size="20">PENDIENTE</text>
+  <text x="451" y="245" fill="#17242a" font-family="Arial Black, sans-serif" font-size="52">
+    <tspan x="451" dy="0">DORÁ EL POLLO HASTA</tspan>
+    <tspan x="451" dy="56">QUE LA COSTRA SUENE</tspan>
+    <tspan x="451" dy="56">SECA AL TOCARLA.</tspan>
+  </text>
+  <g font-family="monospace" font-size="14">
+    <rect x="451" y="385" width="225" height="55" rx="13" fill="#d8e7d2" stroke="#17242a" stroke-width="4"/>
+    <rect x="462" y="396" width="32" height="32" rx="8" fill="#ba4b36"/>
+    <text x="510" y="419" fill="#286b4a">POLLO · 500 g</text>
+    <rect x="696" y="385" width="194" height="55" rx="13" fill="#d8e7d2" stroke="#17242a" stroke-width="4"/>
+    <rect x="707" y="396" width="32" height="32" rx="8" fill="#75496c"/>
+    <text x="755" y="419" fill="#286b4a">SAL · a gusto</text>
+  </g>
+  <rect x="411" y="474" width="715" height="94" rx="18" fill="#f2e9be" stroke="#17242a" stroke-width="5"/>
+  <circle cx="500" cy="521" r="72" fill="#abc2b5" opacity=".85"/>
+  <text x="444" y="506" fill="#17242a" font-family="monospace" font-size="13">DORAR POLLO</text>
+  <text x="444" y="550" fill="#17242a" font-family="Arial Black, sans-serif" font-size="50">04:00</text>
+  <rect x="856" y="492" width="112" height="58" rx="12" fill="#17242a"/>
+  <text x="883" y="528" fill="#fff6d8" font-family="monospace" font-size="16">INICIAR</text>
+  <rect x="984" y="492" width="112" height="58" rx="12" fill="#17242a"/>
+  <text x="1015" y="528" fill="#fff6d8" font-family="monospace" font-size="16">+30 s</text>
+</svg>

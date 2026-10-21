@@ -1,0 +1,20 @@
+Estas instrucciones se aplican solamente cuando yo escriba «pasala a Mise». Hasta ese momento, seguí conversando y desarrollando la receta de forma natural. No reemplaces el tono, las decisiones ni el contexto previo del chat.
+
+Cuando yo diga «pasala a Mise»:
+
+1. Consolidá la receta acordada y las decisiones útiles de la conversación en un único JSON compatible con `mise.recipe` versión 1.2.
+2. No inventes datos. Guardá dudas reales en `context.uncertainties`.
+3. Incluí para cada ingrediente su cantidad total, `kind`, condición opcional y política de escalado.
+4. Ordená `steps` como un recorrido completo que pueda seguirse sin haber leído toda la receta antes de empezar.
+5. Prepará antes del primer uso todo ingrediente que haya que lavar, cortar, picar, rallar, medir o decidir. Si sugerís un ingrediente opcional, incorporalo también en su preparación previa; no lo menciones por primera vez cuando ya sea tarde.
+6. Cada paso debe tener un `shortLabel` breve, acción autosuficiente, cantidades usadas en ese momento, componente o estación, calor cuando aplique, `startWhen`, señales sensoriales en `doneWhen`, temporizador opcional, dependencias, tareas paralelas, errores previsibles, rescates y una frase breve para audio.
+7. Usá `dependsOn` y `canRunWith` para conservar trabajo paralelo sin convertir el recorrido en confirmaciones obligatorias.
+8. Mantené exactamente los identificadores entre ingredientes, componentes, pasos y dependencias.
+
+Entregá solamente el resultado final entre estos delimitadores:
+
+---MISE/1---
+{ JSON válido }
+---END-MISE---
+
+Si podés crear archivos, adjuntá además el mismo JSON como `nombre-de-receta.mise.json`. Si te adjunto un ejemplo Mise, usalo como referencia estructural, no como contenido culinario.

@@ -1,0 +1,136 @@
+{
+  "format": "mise.recipe",
+  "version": "1.1-draft",
+  "recipeId": "pollo-ostras-demo",
+  "revision": 1,
+  "locale": "es-AR",
+  "title": "Pollo con salsa de ostras y arroz",
+  "servings": {
+    "count": 2,
+    "note": "Cena y tupper abundantes"
+  },
+  "context": {
+    "goal": "Cenar hoy y recalentar una porción mañana",
+    "equipment": ["sartén grande", "olla"],
+    "constraints": [],
+    "dietary": [],
+    "availableIngredients": [],
+    "decisions": ["Usar el aceite de sésamo únicamente con el fuego apagado"],
+    "uncertainties": []
+  },
+  "ingredients": [
+    { "id": "chicken", "name": "suprema de pollo", "amount": { "min": 600, "max": 700, "unit": "g" }, "scaling": "linear", "kind": "protein" },
+    { "id": "rice", "name": "arroz jazmín", "amount": { "min": 180, "max": 200, "unit": "g" }, "scaling": "linear", "kind": "grain" },
+    { "id": "oyster-sauce", "name": "salsa de ostras", "amount": { "value": 2.5, "unit": "cda" }, "scaling": "linear", "kind": "liquid" },
+    { "id": "soy-sauce", "name": "salsa de soja clara", "amount": { "value": 1.5, "unit": "cda" }, "scaling": "linear", "kind": "liquid" },
+    { "id": "cornstarch", "name": "maicena", "amount": { "value": 1, "unit": "cdita" }, "scaling": "linear", "scalingNote": "Revolver la salsa antes de volcar", "kind": "seasoning" },
+    { "id": "neutral-oil", "name": "aceite neutro", "amount": { "value": 1, "unit": "cda" }, "scaling": "batch", "scalingNote": "Una cucharada por tanda", "kind": "fat" },
+    { "id": "sesame-oil", "name": "aceite de sésamo", "amount": { "text": "unas gotas" }, "scaling": "to-taste", "scalingNote": "Solo al final, con el fuego apagado", "kind": "fat" }
+  ],
+  "components": [
+    { "id": "chicken-component", "title": "Pollo y salsa", "preferredStation": "sartén" },
+    { "id": "rice-component", "title": "Arroz", "preferredStation": "olla" }
+  ],
+  "steps": [
+    {
+      "id": "cook-rice",
+      "componentId": "rice-component",
+      "shortLabel": "Cocer arroz",
+      "action": "Cociná el arroz tapado a hervor suave hasta que absorba el agua.",
+      "amounts": [{ "ingredientId": "rice", "value": 190, "unit": "g" }],
+      "heat": "medio-bajo",
+      "startWhen": "El agua acaba de romper hervor.",
+      "doneWhen": [{ "sense": "visual", "cue": "No queda agua libre y aparecen canales entre los granos." }],
+      "timer": { "label": "Cocción orientativa del arroz", "durationSeconds": 720, "startTrigger": "user-confirmed" },
+      "dependsOn": [],
+      "canRunWith": [],
+      "avoid": ["Destapar o revolver continuamente"],
+      "rescues": [{ "when": "Se secó y el centro sigue duro", "do": "Agregá dos cucharadas de agua caliente, tapá y seguí a fuego mínimo." }],
+      "voice": "Cociná el arroz tapado a hervor suave. Mirá que no quede agua libre."
+    },
+    {
+      "id": "brown-chicken",
+      "componentId": "chicken-component",
+      "shortLabel": "Dorar pollo",
+      "action": "Dorá el pollo en una o dos tandas, sin amontonarlo.",
+      "amounts": [{ "ingredientId": "chicken", "value": 650, "unit": "g" }],
+      "heat": "fuerte",
+      "startWhen": "La sartén está caliente.",
+      "doneWhen": [{ "sense": "visual", "cue": "Costra marrón en las caras principales; el centro puede quedar sin terminar." }],
+      "timer": { "label": "Primera cara del pollo", "durationSeconds": 120, "startTrigger": "user-confirmed" },
+      "dependsOn": [],
+      "canRunWith": ["rice-rest"],
+      "avoid": ["Llenar toda la sartén"],
+      "rescues": [{ "when": "El pollo larga agua", "do": "Retirá parte, recuperá temperatura y continuá en tandas." }],
+      "voice": "Dorá el pollo separado y dejá la primera cara quieta dos minutos."
+    },
+    {
+      "id": "rice-rest",
+      "componentId": "rice-component",
+      "shortLabel": "Reposar arroz",
+      "action": "Apagá el arroz y dejalo reposar tapado.",
+      "amounts": [{ "ingredientId": "rice", "value": 190, "unit": "g" }],
+      "startWhen": "El arroz terminó su cocción.",
+      "doneWhen": [{ "sense": "time", "cue": "Reposó aproximadamente cinco minutos." }],
+      "timer": { "label": "Reposo del arroz", "durationSeconds": 300, "startTrigger": "user-confirmed" },
+      "dependsOn": ["cook-rice"],
+      "canRunWith": ["brown-chicken"],
+      "avoid": ["Mezclar todavía las sobras"],
+      "rescues": [],
+      "voice": "Dejá el arroz tapado cinco minutos y después soltalo con tenedor."
+    },
+    {
+      "id": "turn-chicken",
+      "componentId": "chicken-component",
+      "shortLabel": "Girar pollo",
+      "action": "Girá el pollo y terminá de dorar la segunda cara.",
+      "amounts": [{ "ingredientId": "chicken", "value": 650, "unit": "g" }],
+      "heat": "fuerte",
+      "startWhen": "La primera cara tiene costra y se despega sin resistencia.",
+      "doneWhen": [{ "sense": "texture", "cue": "El centro está firme con una leve elasticidad." }],
+      "timer": { "label": "Segunda cara del pollo", "durationSeconds": 60, "startTrigger": "user-confirmed" },
+      "dependsOn": ["brown-chicken"],
+      "canRunWith": ["rice-rest"],
+      "avoid": ["Secar el pollo por completo"],
+      "rescues": [{ "when": "La costra se oscurece demasiado rápido", "do": "Bajá un punto el fuego y girá las piezas más tostadas." }],
+      "voice": "Girá el pollo y retiralo cuando esté firme pero todavía jugoso."
+    },
+    {
+      "id": "mix-sauce",
+      "componentId": "chicken-component",
+      "shortLabel": "Mezclar salsa",
+      "action": "Revolvé la salsa cinco segundos para reincorporar la maicena.",
+      "amounts": [
+        { "ingredientId": "oyster-sauce", "value": 2.5, "unit": "cda" },
+        { "ingredientId": "soy-sauce", "value": 1.5, "unit": "cda" },
+        { "ingredientId": "cornstarch", "value": 1, "unit": "cdita" }
+      ],
+      "startWhen": "El pollo ya está dorado y fuera de la sartén.",
+      "doneWhen": [{ "sense": "visual", "cue": "La salsa está uniforme y no queda sedimento blanco." }],
+      "dependsOn": ["turn-chicken"],
+      "canRunWith": ["rice-rest"],
+      "avoid": ["Volcar sin remover la maicena depositada"],
+      "rescues": [],
+      "voice": "Revolvé la salsa hasta que no quede maicena en el fondo."
+    },
+    {
+      "id": "glaze-chicken",
+      "componentId": "chicken-component",
+      "shortLabel": "Laquear y servir",
+      "action": "Volvé a poner el pollo, ligá la salsa y apagá antes del aceite de sésamo.",
+      "amounts": [{ "ingredientId": "sesame-oil", "value": 0, "unit": "a gusto" }],
+      "heat": "medio y luego apagado",
+      "startWhen": "La salsa está bien mezclada.",
+      "doneWhen": [{ "sense": "texture", "cue": "La salsa cubre el pollo con una película brillante y sin grumos." }],
+      "dependsOn": ["mix-sauce"],
+      "canRunWith": [],
+      "avoid": ["Hervir el aceite de sésamo"],
+      "rescues": [{ "when": "La salsa quedó demasiado espesa", "do": "Agregá agua caliente de a una cucharada y mezclá fuera del fuego." }],
+      "voice": "Ligá la salsa, apagá el fuego y recién entonces agregá unas gotas de aceite de sésamo."
+    }
+  ],
+  "finish": {
+    "storage": "Guardar el pollo con suficiente salsa.",
+    "reheat": "Recalentar cubierto y agregar una cucharada de agua si hace falta."
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "project": {
+    "id": "2352917867423877565",
+    "title": "Functional Inventory Redesign"
+  },
+  "exportedAt": "2026-09-13T04:43:47.185Z",
+  "screens": [
+    {
+      "id": "1429e1bd9dc04325b04858bfc81d8d3f",
+      "title": "Mise — Vista Tablet Apaisada (1024×768)",
+      "slug": "tablet-landscape",
+      "files": {
+        "html": "tablet-landscape/screen.html",
+        "image": "tablet-landscape/screenshot.png"
+      },
+      "mediaTypes": {
+        "html": "text/html",
+        "image": "image/png"
+      }
+    },
+    {
+      "id": "05271a7bbe864f599c09317de4a406d5",
+      "title": "Mise — Vista Smartphone Vertical (390×844)",
+      "slug": "smartphone-portrait",
+      "files": {
+        "html": "smartphone-portrait/screen.html",
+        "image": "smartphone-portrait/screenshot.png"
+      },
+      "mediaTypes": {
+        "html": "text/html",
+        "image": "image/png"
+      }
+    },
+    {
+      "id": "8226fba891d74c46b642e3faff68c564",
+      "title": "Mise — Vista Smartphone Apaisado (844×390)",
+      "slug": "smartphone-landscape",
+      "files": {
+        "html": "smartphone-landscape/screen.html",
+        "image": "smartphone-landscape/screenshot.png"
+      },
+      "mediaTypes": {
+        "html": "text/html",
+        "image": "image/png"
+      }
+    },
+    {
+      "id": "eec45900246e48f59ee031a5fab8f318",
+      "title": "DESIGN.md — Mise Culinaria (Sistema Salvia Mineral & Lino)",
+      "slug": "design-md",
+      "files": {
+        "markdown": "design-md/DESIGN.md"
+      },
+      "mediaTypes": {
+        "markdown": "text/markdown"
+      }
+    },
+    {
+      "id": "555c3a776d32430e86ce971bdee5023e",
+      "title": "Mise — Salvia Mineral Pura (Foco y Síntesis)",
+      "slug": "salvia-mineral",
+      "files": {
+        "html": "salvia-mineral/screen.html",
+        "image": "salvia-mineral/screenshot.png"
+      },
+      "mediaTypes": {
+        "html": "text/html",
+        "image": "image/png"
+      }
+    },
+    {
+      "id": "17aeea9f2e054d588e8b9dd5ed382a9b",
+      "title": "Mise — Esencial & Foco Máximo (Versión Purificada)",
+      "slug": "essential-focus",
+      "files": {
+        "html": "essential-focus/screen.html",
+        "image": "essential-focus/screenshot.png"
+      },
+      "mediaTypes": {
+        "html": "text/html",
+        "image": "image/png"
+      }
+    }
+  ]
+}

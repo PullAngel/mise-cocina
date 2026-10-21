@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17242a">
+  <meta name="description" content="Mise Cocina convierte una receta estructurada en una mesa de trabajo local, táctil y recuperable para cocinar. Código abierto para Android y web.">
+  <meta property="og:title" content="Mise Cocina — la receta deja de ser un texto">
+  <meta property="og:description" content="Una superficie de cocina local con pasos, ingredientes, señales y temporizadores persistentes.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/product-preview.svg">
+  <title>Mise Cocina — la receta deja de ser un texto</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="Mise Cocina, inicio">
+      <img src="assets/logo.svg" alt="" width="42" height="42">
+      <span>MISE</span>
+    </a>
+    <nav aria-label="Navegación principal">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#abierto">Código abierto</a>
+      <a href="#probar">Probar</a>
+    </nav>
+    <a class="header-cta" href="https://github.com/PullAngel/mise-cocina">Ver el código <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="contenido">
+    <section class="hero" id="inicio">
+      <div class="hero-copy">
+        <p class="eyebrow"><span>ALPHA 0.4.1</span> · ANDROID + PWA · LOCAL</p>
+        <h1>LA RECETA DEJA DE SER <em>UN TEXTO.</em></h1>
+        <p class="lede">Mise convierte una receta acordada en una mesa de trabajo: pasos grandes, ingredientes conectados, señales de cocción y relojes que no pierden el hilo.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="https://github.com/PullAngel/mise-cocina/releases/latest">Descargar APK <span aria-hidden="true">↓</span></a>
+          <a class="button secondary" href="https://github.com/PullAngel/mise-cocina">Explorar repositorio <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="release-note">Gratis y de código abierto. Sin cuenta, servidor, anuncios ni API key.</p>
+      </div>
+
+      <div class="hero-demo" aria-label="Demostración interactiva de una receta en Mise">
+        <div class="demo-topbar">
+          <span class="mini-brand"><i></i> MISE</span>
+          <span>19:24</span>
+          <span class="battery" aria-label="Batería al 72 por ciento"><i></i>72%</span>
+        </div>
+        <div class="demo-workspace">
+          <aside class="demo-route">
+            <div class="route-title"><b>RECORRIDO</b><span>2/4 hechos</span></div>
+            <button class="route-step done" data-step="0"><span>01</span><b>PREPARAR SALSA</b><i>✓</i></button>
+            <button class="route-step active" data-step="1"><span>02</span><b>DORAR POLLO</b><i>○</i></button>
+            <button class="route-step" data-step="2"><span>03</span><b>LACAR</b><i>○</i></button>
+            <button class="route-step" data-step="3"><span>04</span><b>SERVIR</b><i>○</i></button>
+          </aside>
+          <article class="demo-recipe">
+            <div class="demo-meta"><span id="demoNumber">02</span><b id="demoComponent">POLLO</b><button id="demoDone">PENDIENTE</button></div>
+            <h2 id="demoAction">DORÁ EL POLLO HASTA QUE LA COSTRA SUENE SECA AL TOCARLA.</h2>
+            <div class="demo-chips" id="demoChips">
+              <span><i class="protein"></i> POLLO · 500 g</span>
+              <span><i class="spice"></i> SAL · a gusto</span>
+            </div>
+            <div class="demo-cues">
+              <div><small>EMPEZÁ CUANDO</small><b>La sartén esté bien caliente.</b></div>
+              <div><small>ESTÁ LISTO CUANDO</small><b id="demoCue">La superficie esté dorada y se despegue sola.</b></div>
+            </div>
+            <div class="demo-timer">
+              <span><small id="timerLabel">DORAR POLLO</small><b id="timerValue">04:00</b></span>
+              <button id="timerToggle">INICIAR</button>
+              <button id="timerAdd">+30 s</button>
+            </div>
+          </article>
+        </div>
+        <p class="demo-hint">Probá los pasos. Esta maqueta reproduce la lógica visual, no ejecuta la aplicación.</p>
+      </div>
+    </section>
+
+    <section class="problem-strip" aria-label="Problemas que resuelve Mise">
+      <p><b>NO MÁS</b> volver a un chat con las manos mojadas.</p>
+      <p><b>NO MÁS</b> temporizadores sin contexto.</p>
+      <p><b>NO MÁS</b> descubrir un ingrediente opcional cuando ya es tarde.</p>
+    </section>
+
+    <section class="story section" id="como-funciona">
+      <div class="section-intro">
+        <p class="eyebrow">DE CONVERSACIÓN A COCINA</p>
+        <h2>DECIDÍ LA RECETA. MISE ORGANIZA EL TRABAJO.</h2>
+        <p>La inteligencia puede ayudar a pensar una receta. En la mesada hace falta otra cosa: una interfaz estable que recuerde el plan y no pida conversación.</p>
+      </div>
+      <ol class="flow">
+        <li>
+          <span>01</span>
+          <div><h3>Conversá</h3><p>Ajustá sabores, ingredientes, cantidades y técnica con el asistente o persona que prefieras.</p></div>
+        </li>
+        <li>
+          <span>02</span>
+          <div><h3>Entregá</h3><p>Pedí el archivo <code>.mise.json</code>. El esquema abierto mantiene pasos, componentes, señales y tiempos en orden.</p></div>
+        </li>
+        <li>
+          <span>03</span>
+          <div><h3>Cociná</h3><p>Mise valida el archivo y lo guarda localmente. Desde ahí, la sesión funciona sin depender de internet.</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="canvas-section section">
+      <div class="canvas-copy">
+        <p class="eyebrow">UNA SOLA FUENTE, VARIAS VISTAS</p>
+        <h2>TODO LO QUE NECESITÁS. DONDE LO NECESITÁS.</h2>
+        <p>Receta, recorrido, ingredientes, audio y temporizadores leen el mismo estado. Cambiar de vista u orientación no cambia lo que estabas cocinando.</p>
+        <ul class="checks">
+          <li><span>✓</span> Documento completo con scroll libre</li>
+          <li><span>✓</span> Índice compacto para volver a cualquier paso</li>
+          <li><span>✓</span> Ingredientes escalables y faltantes visibles</li>
+          <li><span>✓</span> Temporizadores vinculados al paso que los creó</li>
+        </ul>
+      </div>
+      <div class="ingredient-board">
+        <div class="board-head"><span>INGREDIENTES</span><b>2 PORCIONES</b></div>
+        <div class="ingredient-row"><i class="food-symbol protein">◆</i><span><b>POLLO EN TROZOS</b><small>Disponible</small></span><em>500 g</em></div>
+        <div class="ingredient-row"><i class="food-symbol sauce">●</i><span><b>TAMARINDO</b><small>Disponible</small></span><em>2 cdas</em></div>
+        <div class="ingredient-row missing"><i class="food-symbol">✦</i><span><b>JENGIBRE</b><small>Falta</small></span><em>2 cdtas</em></div>
+        <div class="ingredient-row"><i class="food-symbol garnish">▦</i><span><b>ARROZ BLANCO</b><small>Disponible</small></span><em>190 g</em></div>
+      </div>
+    </section>
+
+    <section class="signal-section section">
+      <div class="signal-title">
+        <p class="eyebrow">EL RELOJ AYUDA. LOS SENTIDOS DECIDEN.</p>
+        <h2>UNA RECETA QUE TE DICE QUÉ MIRAR.</h2>
+      </div>
+      <div class="signal-grid">
+        <article>
+          <span class="signal-index">01</span>
+          <h3>Antes</h3>
+          <p>Qué tiene que estar listo antes de tocar el fuego, incluidos los ingredientes opcionales.</p>
+        </article>
+        <article>
+          <span class="signal-index">02</span>
+          <h3>Durante</h3>
+          <p>Color, aroma, textura y sonido para reconocer el punto sin obedecer ciegamente un minuto.</p>
+        </article>
+        <article>
+          <span class="signal-index">03</span>
+          <h3>Si algo cambia</h3>
+          <p>Rescates concretos para una salsa espesa, un dorado insuficiente o un sabor fuera de balance.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="open-section section" id="abierto">
+      <div class="open-card">
+        <p class="eyebrow">ABIERTO POR DISEÑO</p>
+        <h2>EL FORMATO TAMBIÉN ES PARTE DEL PRODUCTO.</h2>
+        <p>El código, el esquema JSON, los prompts y las recetas de ejemplo viven juntos. Podés estudiar la aplicación, modificarla, crear herramientas compatibles o proponer una forma mejor de cocinar.</p>
+        <div class="tech-line" aria-label="Tecnologías">
+          <span>REACT</span><span>TYPESCRIPT</span><span>CAPACITOR</span><span>JSON SCHEMA</span>
+        </div>
+        <div class="open-actions">
+          <a class="button dark" href="https://github.com/PullAngel/mise-cocina/blob/main/CONTRIBUTING.md">Cómo contribuir</a>
+          <a class="text-link" href="https://github.com/PullAngel/mise-cocina/blob/main/schema/mise-recipe.schema.json">Ver el esquema <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <aside class="license-note">
+        <b>GPL-3.0-OR-LATER</b>
+        <p>Podés usar, estudiar, modificar y distribuir. Las versiones derivadas distribuidas conservan esas libertades.</p>
+        <p>La licencia permite actividad comercial. La marca distingue las versiones oficiales.</p>
+      </aside>
+    </section>
+
+    <section class="honest-section section">
+      <div>
+        <p class="eyebrow">SIN HUMO</p>
+        <h2>HOY ES UNA ALPHA QUE YA SE PUEDE COCINAR.</h2>
+      </div>
+      <div class="honest-copy">
+        <p>Mise nació de usar recetas conversadas en una cocina real. La versión actual está preparada para pruebas cotidianas y para recibir correcciones, todavía no para prometer compatibilidad universal ni una publicación de tienda.</p>
+        <p>No hay cuenta, nube obligatoria, marketplace ni seguimiento de uso. El roadmap crece a partir de problemas observados, no de una lista de funciones para vender.</p>
+        <a class="text-link" href="https://github.com/PullAngel/mise-cocina/blob/main/ROADMAP.md">Leer el roadmap <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <section class="final-cta section" id="probar">
+      <img src="assets/logo.svg" width="72" height="72" alt="">
+      <p class="eyebrow">MISE COCINA · 0.4.1</p>
+      <h2>LLEVÁ LA RECETA A LA MESADA.</h2>
+      <p>Descargá la alpha, probá una receta y contanos qué se rompe cuando el teléfono entra de verdad en la cocina.</p>
+      <div class="hero-actions centered">
+        <a class="button primary" href="https://github.com/PullAngel/mise-cocina/releases/latest">Descargar para Android</a>
+        <a class="button secondary" href="https://github.com/PullAngel/mise-cocina/issues">Reportar o proponer</a>
+      </div>
+      <small>El APK de pruebas se distribuye desde GitHub Releases. Verificá siempre que el origen sea <b>PullAngel/mise-cocina</b>.</small>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#inicio"><img src="assets/logo.svg" alt="" width="34" height="34"><span>MISE</span></a>
+    <p>Hecho para cocinar, aprender y seguir trabajando en abierto.</p>
+    <div><a href="https://github.com/PullAngel/mise-cocina">GitHub</a><a href="https://github.com/PullAngel/mise-cocina/blob/main/LICENSE">Licencia</a><a href="https://github.com/PullAngel/mise-cocina/blob/main/SECURITY.md">Seguridad</a></div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

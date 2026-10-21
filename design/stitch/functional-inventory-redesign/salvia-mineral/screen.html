@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#EAF0EB]" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mise — Salvia Botánica &amp; Lino Mineral</title>
+<!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono para ultra legibilidad técnica -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            salvia: {
+              50: '#F4F7F4',
+              100: '#E8EFE8',
+              200: '#D5E2D5',
+              700: '#2E4C3D',
+              800: '#223B2F',
+              900: '#172B22',
+            },
+            botanical: {
+              pine: '#1A3326',
+              border: '#234433',
+            },
+            mandarina: {
+              500: '#E65D2E',
+              600: '#D44F22',
+            },
+            lavender: {
+              bg: '#F2EFF7',
+              border: '#8F86A3',
+              text: '#4C445C',
+            }
+          },
+          boxShadow: {
+            'soft-card': '0 2px 6px -1px rgba(22, 43, 34, 0.07), 0 4px 16px -2px rgba(22, 43, 34, 0.04)',
+            'btn-primary': '0 3px 0 #B93E15',
+            'btn-sec': '0 3px 0 #CBD5CF',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full font-sans antialiased text-botanical-pine bg-[#EAF0EB] flex flex-col justify-between p-3 sm:p-4 select-none overflow-x-hidden">
+<!-- BEGIN: TopBar -->
+<header class="w-full bg-[#FDFDFC] border-[1.5px] border-botanical-border rounded-xl px-3.5 py-2.5 shadow-soft-card flex items-center justify-between gap-2">
+<!-- Identificador de estación y receta activa -->
+<div class="flex items-center gap-3 min-w-0">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EBF3ED] border border-[#234433]/30">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="text-xs font-mono font-bold tracking-tight text-botanical-pine uppercase">Estación 06</span>
+</div>
+<div class="h-4 w-[1.5px] bg-[#D4DFD7]"></div>
+<div class="flex items-center gap-2 truncate">
+<h1 class="text-sm md:text-base font-extrabold tracking-tight text-botanical-pine truncate">
+          Pollo con Salsa de Ostras &amp; Arroz Jazmín
+        </h1>
+<span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md bg-[#F0EBF8] text-lavender-text border border-lavender-border/40 text-[11px] font-bold">
+          2 Raciones
+        </span>
+</div>
+</div>
+<!-- Indicadores de control y voz para mesada -->
+<div class="flex items-center gap-2 shrink-0">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#234433]/20 text-[11px] font-bold text-botanical-pine">
+<svg class="w-3.5 h-3.5 text-mandarina-500" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>VOZ ACTIVA</span>
+</div>
+</div>
+</header>
+<!-- END: TopBar -->
+<!-- BEGIN: MainCookingDashboard -->
+<main class="w-full my-2.5 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch flex-1">
+<!-- Left: Sartén Principal (Zona Crítica Focal) -->
+<section class="lg:col-span-8 bg-[#FAFBF9] border-2 border-botanical-border rounded-2xl p-4 sm:p-5 shadow-soft-card flex flex-col justify-between" data-purpose="primary-action-zone">
+<div>
+<!-- Metadata de Cocción: Sartén & Potencia -->
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E1EAE3]">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-md bg-botanical-pine text-white text-[11px] font-mono font-bold uppercase tracking-wider">
+              Sec-03 • Hornalla Grande
+            </span>
+<span class="px-2 py-0.5 rounded-md bg-[#FCEEE8] border border-mandarina-500/30 text-mandarina-600 text-[11px] font-extrabold tracking-wide uppercase">
+              Fuego Alto [100%]
+            </span>
+</div>
+<span class="text-xs font-mono font-bold text-[#556E5F] bg-[#EDF3EF] px-2 py-0.5 rounded border border-[#CDE0D4]">
+            Tanda 01 / 02
+          </span>
+</div>
+<!-- Instrucción Maestra de Alta Legibilidad -->
+<div class="mt-4">
+<h2 class="text-2xl sm:text-3xl xl:text-[32px] font-black text-botanical-pine leading-[1.18] tracking-tight">
+            Dorá la mitad del pollo 
+            <span class="inline-block bg-[#F8EFE0] px-2 py-0.5 rounded-md text-[#7D5315] border-b-2 border-[#D1B88B] font-mono">
+              (~200 g)
+            </span> 
+            en la sartén bien caliente
+          </h2>
+</div>
+</div>
+<!-- Temporizador Focal y Regla Crítica de Maillard -->
+<div class="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+<!-- Temporizador Gigante -->
+<div class="sm:col-span-5 bg-[#FFFFFF] border-[1.5px] border-botanical-border rounded-xl p-3 text-center shadow-sm">
+<div class="flex items-center justify-center gap-1.5 text-xs font-bold text-mandarina-600 font-mono uppercase tracking-wider mb-0.5">
+<span class="w-2 h-2 rounded-full bg-mandarina-500"></span>
+            T. Restante
+          </div>
+<div class="text-4xl sm:text-5xl font-mono font-extrabold text-botanical-pine tracking-tight leading-none my-1">
+            01:10
+          </div>
+<div class="w-full bg-[#E5EDE7] h-2 rounded-full overflow-hidden mt-2 p-0.5">
+<div class="bg-mandarina-500 h-full rounded-full transition-all duration-300" style="width: 58%;"></div>
+</div>
+</div>
+<!-- Tarjeta de Conocimiento: Regla de Maillard -->
+<div class="sm:col-span-7 bg-[#F7F9F6] border border-[#CBD8CE] rounded-xl p-3 flex gap-3 items-start"><div class="shrink-0 w-8 h-8 rounded-lg bg-[#FAF0EB] border border-[#F2C2B0] flex items-center justify-center text-mandarina-500"><svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.527.82-1.163 2.213-1.163 3.952 0 .154.01.306.027.456a4.5 4.5 0 00-2.484 1.838 5.48 5.48 0 00-.703 2.706 5.5 5.5 0 0011 0c0-1.61-.715-3.04-1.85-4.004a4.48 4.48 0 00-.916-2.943c-.452-.61-1.026-1.11-1.64-1.5zM8.5 13a3.5 3.5 0 107 0 3.5 3.5 0 00-7 0z" fill-rule="evenodd"></path></svg></div><div><span class="text-[11px] font-mono font-bold uppercase tracking-wider text-botanical-pine block mb-0.5">Señal Sensorial Clave</span><p class="text-xs sm:text-sm text-[#3E5648] font-bold leading-snug"><span class="text-botanical-pine bg-[#E7EFE9] px-1 py-0.5 rounded">Costra dorada ámbar</span> • Despega sola sin resistencia</p></div></div>
+</div>
+</section>
+<!-- Right: Procesos Secundarios Simultáneos (2 bloques) -->
+<aside class="lg:col-span-4 flex flex-col gap-3 justify-between" data-purpose="secondary-processes">
+<!-- Proceso 1: Reposo Arroz Jazmín (Lavanda Mineral Nórdica) -->
+<div class="bg-lavender-bg border-[1.5px] border-lavender-border/60 rounded-2xl p-3.5 shadow-soft-card flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between border-b border-lavender-border/30 pb-2 mb-2"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7E7497]"></span><span class="text-xs font-mono font-extrabold uppercase text-lavender-text tracking-wider">Arroz Jazmín</span><span class="text-[10px] font-medium text-lavender-text/70 uppercase">• H. Trasera</span></div><div class="text-sm font-mono font-extrabold text-lavender-text bg-white/70 px-2 py-0.5 rounded border border-lavender-border/40">04:06</div></div><h3 class="text-sm font-bold text-[#352D42]">Reposo tapado fuera del fuego</h3></div><div class="mt-2.5 pt-2 border-t border-lavender-border/20 flex items-center justify-between text-[11px] text-lavender-text font-mono font-medium"><span>Sin fuego activo</span><span class="font-bold text-[10px] text-lavender-text/80 uppercase">Vapor residual</span></div></div>
+<!-- Proceso 2: Salsa de Ostras & Maicena -->
+<div class="bg-[#FAFBF9] border-[1.5px] border-[#BDCCBF] rounded-2xl p-3.5 shadow-soft-card flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between border-b border-[#E3EBE4] pb-2 mb-2"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-700"></span><span class="text-xs font-mono font-extrabold uppercase text-botanical-pine tracking-wider">Salsa Ligadora</span><span class="text-[10px] font-medium text-[#657E6E] uppercase">• En Bol</span></div><span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#EBF2EC] text-[#244833] border border-[#C6D8CA]">LISTA</span></div><h3 class="text-sm font-bold text-botanical-pine">Revolver 5s antes de volcar</h3></div><div class="mt-2.5 pt-2 border-t border-[#E8EEE9] flex items-center justify-between"><span class="text-[11px] font-mono text-[#6C8575]">Almidón integrado</span><span class="text-xs font-bold font-mono px-2 py-0.5 bg-[#F2F5F2] text-botanical-pine rounded border border-[#C5D5C8]">OK</span></div></div>
+</aside>
+</main>
+<!-- END: MainCookingDashboard -->
+<!-- BEGIN: BottomCommandBar -->
+<footer class="w-full bg-[#FDFDFC] border-[1.5px] border-botanical-border rounded-xl p-2.5 shadow-soft-card flex flex-col sm:flex-row items-center gap-2.5 justify-between" data-purpose="primary-controls">
+<!-- Información de fase y control por voz -->
+<div class="flex items-center justify-between w-full sm:w-auto gap-3 px-1">
+<div class="flex items-center gap-2 font-mono text-xs">
+<span class="bg-botanical-pine text-white px-2 py-1 rounded-md font-bold tracking-wider">
+          FASE 03 / 06
+        </span>
+<span class="text-botanical-pine/80 font-bold hidden md:inline">
+          3 Procesos Activos
+        </span>
+</div>
+<div class="text-[11px] font-mono font-medium text-[#496654] flex items-center gap-1.5">
+<kbd class="bg-[#EAEFEA] px-1.5 py-0.5 rounded text-[10px] font-bold border border-[#CBD7CE] text-botanical-pine">Diga:</kbd>
+<span>"MISE, SIGUIENTE"</span>
+</div>
+</div>
+<!-- Botones de Acción Primaria de 56px de alto según requerimiento ergonómico -->
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<!-- Botón +30s -->
+<button aria-label="Agregar 30 segundos" class="h-[56px] px-5 rounded-xl bg-white border-2 border-botanical-border text-botanical-pine font-mono font-bold text-base hover:bg-[#F2F6F3] active:translate-y-0.5 transition shadow-btn-sec flex items-center justify-center shrink-0 cursor-pointer" type="button">
+        +30s
+      </button>
+<!-- Botón Principal 'Listo: Dar vuelta y sellar' -->
+<button aria-label="Marcar listo para dar vuelta y sellar" class="h-[56px] flex-1 sm:w-[340px] px-5 rounded-xl bg-mandarina-500 hover:bg-mandarina-600 text-white font-extrabold text-sm sm:text-base border-2 border-[#A83713] tracking-wide active:translate-y-0.5 transition shadow-btn-primary flex items-center justify-between gap-3 cursor-pointer" type="button">
+<span class="flex items-center gap-2 text-left truncate">
+<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="truncate uppercase tracking-tight">Listo: Dar vuelta y sellar</span>
+</span>
+<span class="font-mono text-xs bg-white/20 px-2 py-1 rounded tracking-widest shrink-0">
+          PASO 04 →
+        </span>
+</button>
+</div>
+</footer>
+<!-- END: BottomCommandBar -->
+</body></html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Mise · Mesa en foco</title>
+  <style>
+    :root {
+      --sage-0:#f1fcf5; --sage-1:#e8f3ed; --sage-2:#d8e4de;
+      --ink:#111a17; --muted:#52635b; --line:rgba(28,40,38,.18);
+      --paper:#fffefa; --linen:#fbf4e9; --fire:#c84218; --fire-dark:#a93411;
+      --amber:#df8214; --green:#167249; --danger:#bd321f;
+      --shadow:0 10px 28px rgba(25,45,37,.10);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--sage-0);color:var(--ink);overflow:hidden}
+    button{font:inherit;color:inherit;cursor:pointer}
+    button:focus-visible{outline:3px solid #2d77ff;outline-offset:2px}
+    .screen{height:100dvh;display:flex;flex-direction:column}
+    .hidden{display:none!important}
+    .topbar{height:48px;flex:0 0 48px;display:flex;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(241,252,245,.94)}
+    .brand{display:flex;align-items:center;gap:8px;font-weight:850;letter-spacing:-.02em}
+    .brand-mark{width:12px;height:12px;border-radius:4px 4px 4px 1px;background:var(--fire);transform:rotate(-12deg)}
+    .recipe-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:750}
+    .source-chip,.status-chip{border:1px solid var(--line);border-radius:99px;padding:5px 9px;background:white;font-size:11px;font-weight:750;white-space:nowrap}
+    .status-chip{margin-left:auto;color:var(--green)}
+    .icon-btn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:white;display:grid;place-items:center;font-size:17px}
+    .workspace{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1.75fr) minmax(250px,.9fr);gap:8px;padding:8px}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+    .eyebrow{font-size:10px;font-weight:850;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+    .import-main{padding:clamp(18px,4vw,44px);display:flex;flex-direction:column;justify-content:center;overflow:auto}
+    .import-main h1{font-size:clamp(28px,5vw,52px);line-height:.98;letter-spacing:-.055em;margin:10px 0 16px;max-width:820px}
+    .import-main p{font-size:clamp(14px,1.8vw,18px);line-height:1.5;color:var(--muted);max-width:750px;margin:0}
+    .import-source{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:8px 12px;border-radius:999px;background:var(--sage-1);font-size:12px;font-weight:750}
+    .import-side{padding:18px;overflow-y:auto;scrollbar-color:var(--fire) transparent;scrollbar-width:thin}
+    .import-side h2{font-size:19px;margin:5px 0 12px}
+    .facts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+    .fact{padding:10px;border-radius:12px;background:var(--sage-1);font-size:11px;color:var(--muted)}
+    .fact strong{display:block;color:var(--ink);font-size:14px;margin-top:3px}
+    .review{padding:12px;border-radius:12px;background:var(--linen);border:1px solid rgba(223,130,20,.25);font-size:12px;line-height:1.35}
+    .import-actions{display:flex;gap:8px;margin-top:12px}
+    .primary,.secondary{min-height:52px;border-radius:13px;padding:0 16px;font-weight:850;border:1px solid var(--ink)}
+    .primary{background:var(--fire);border-color:var(--fire);color:white;flex:1;box-shadow:0 6px 0 var(--fire-dark)}
+    .primary:active{transform:translateY(3px);box-shadow:0 3px 0 var(--fire-dark)}
+    .secondary{background:white}
+
+    .focus-card{padding:12px 14px;min-height:0;display:flex;flex-direction:column;box-shadow:none}
+    .meta-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .pill{border-radius:999px;padding:4px 7px;background:var(--sage-1);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+    .pill.fire{background:#fff0e8;color:var(--fire)}
+    .step-count{margin-left:auto;font-size:10px;color:var(--muted);font-weight:700}
+    .action-title{font-size:clamp(21px,3.2vw,34px);line-height:1.03;letter-spacing:-.045em;margin:8px 0 7px;max-width:850px}
+    .quantity{display:inline-block;background:#fff3df;color:#7a3b00;border:1px solid rgba(223,130,20,.35);border-radius:8px;padding:0 .22em;white-space:nowrap}
+    .action-note{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
+    .focus-bottom{margin-top:auto;display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:stretch}
+    .timer-card{border:1px solid var(--line);border-radius:13px;padding:7px 10px;display:flex;align-items:center;gap:10px;background:white}
+    .timer-time{font-size:31px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+    .timer-label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted)}
+    .timer-toggle{margin-left:auto;width:38px;height:38px;border:0;border-radius:10px;background:var(--ink);color:white}
+    .sense{border:1px solid var(--line);border-radius:13px;padding:8px 11px;background:var(--sage-1);display:flex;align-items:center;gap:9px}
+    .sense-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff3df;color:#a14f00;font-size:18px;flex:0 0 auto}
+    .sense strong{display:block;font-size:12px}.sense span{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+    .parallel-rail{min-height:0;overflow-y:auto;padding-right:3px;scrollbar-width:thin;scrollbar-color:var(--fire) transparent;scroll-snap-type:y proximity}
+    .rail-head{position:sticky;top:0;z-index:2;background:var(--sage-0);display:flex;align-items:center;justify-content:space-between;padding:3px 3px 7px}
+    .rail-head span:last-child{font-size:10px;color:var(--muted)}
+    .station{padding:12px;margin-bottom:7px;box-shadow:none;scroll-snap-align:start}
+    .station.active{border-color:var(--green)}
+    .station-head{display:flex;justify-content:space-between;gap:8px;align-items:start}
+    .station h3{font-size:14px;margin:3px 0 5px}
+    .station p{font-size:11px;line-height:1.35;color:var(--muted);margin:0}
+    .station-time{font-variant-numeric:tabular-nums;font-weight:900;font-size:18px;white-space:nowrap}
+    .station button{width:100%;min-height:42px;margin-top:9px;border:1px solid var(--line);border-radius:10px;background:var(--sage-1);font-size:11px;font-weight:800;text-align:left;padding:0 10px}
+    .next-card{background:var(--linen)}
+    .scroll-cue{text-align:center;color:var(--muted);font-size:10px;padding:3px 0 8px}
+    .bottom-bar{height:58px;flex:0 0 58px;padding:6px 8px;display:flex;gap:7px;border-top:1px solid var(--line);background:rgba(241,252,245,.97)}
+    .bottom-bar button{min-height:46px;border-radius:12px;font-weight:850;border:1px solid var(--line);background:white;padding:0 13px}
+    .bottom-bar .done{margin-left:auto;background:var(--fire);border-color:var(--fire);color:white;min-width:min(45vw,390px)}
+    .rescue{color:var(--danger)}
+    .drawer,.modal{position:fixed;inset:0;z-index:20;background:rgba(15,24,20,.42);display:flex;justify-content:flex-end}
+    .drawer-panel{height:100%;width:min(440px,92vw);background:var(--paper);padding:18px;overflow:auto;box-shadow:-20px 0 50px rgba(0,0,0,.15)}
+    .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .drawer h2{font-size:25px;margin:12px 0 4px;letter-spacing:-.03em}
+    .drawer p{color:var(--muted);line-height:1.45}
+    .fix{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px;background:var(--sage-1)}
+    .fix strong{display:block;margin-bottom:5px}.fix p{font-size:13px;margin:0;color:var(--ink)}
+    .modal{align-items:center;justify-content:center;padding:16px}
+    .finish{width:min(560px,94vw);background:var(--paper);border-radius:22px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.25)}
+    .finish h2{font-size:30px;margin:6px 0}.finish p{color:var(--muted)}
+    .finish-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:18px}.finish-actions button{min-height:58px;border:1px solid var(--line);border-radius:13px;background:white;font-weight:800}.finish-actions .save{background:var(--green);color:white}
+    .toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:var(--ink);color:white;padding:10px 14px;border-radius:999px;font-size:12px;z-index:40;box-shadow:var(--shadow)}
+    @media (max-width:700px) and (orientation:portrait){body{overflow:auto}.screen{height:auto;min-height:100dvh}.workspace{display:flex;flex-direction:column;overflow:visible}.focus-card{min-height:420px}.parallel-rail{overflow:visible}.bottom-bar{position:sticky;bottom:0;z-index:8}.bottom-bar .secondary-action{display:none}.topbar .source-chip{display:none}.import-side{overflow:visible}.finish-actions{grid-template-columns:1fr}}
+    @media (max-height:430px){.action-note{display:none}.focus-card{padding:9px 12px}.station{padding:9px}.station p{font-size:10px}.topbar{height:44px;flex-basis:44px}.bottom-bar{height:56px;flex-basis:56px}.workspace{padding:6px}.action-title{margin:6px 0}.rail-head{padding-bottom:4px}}
+  </style>
+</head>
+<body>
+  <section class="screen" id="importScreen">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span> Mise</div>
+      <span class="source-chip">Nueva receta</span>
+      <span class="status-chip">Importación local</span>
+    </header>
+    <main class="workspace">
+      <article class="card import-main">
+        <span class="import-source">✓ Recibida desde ChatGPT · revisión 3</span>
+        <h1>Pollo con salsa de ostras y arroz jazmín</h1>
+        <p>La conversación ya resolvió cantidades, equipo y el orden para que el arroz llegue listo junto con el pollo.</p>
+      </article>
+      <aside class="card import-side">
+        <span class="eyebrow">Antes de cocinar</span>
+        <h2>Todo importante está definido</h2>
+        <div class="facts">
+          <div class="fact">Personas<strong>2</strong></div><div class="fact">Duración<strong>32 min</strong></div>
+          <div class="fact">Preparaciones<strong>3</strong></div><div class="fact">Cronómetros<strong>4 listos</strong></div>
+        </div>
+        <div class="review"><strong>Una aclaración conservada</strong><br>La salsa se incorpora después de dorar ambas tandas, con la sartén todavía caliente.</div>
+        <div class="import-actions"><button class="secondary" id="seePlan">Ver recorrido</button><button class="primary" id="startCook">Empezar</button></div>
+      </aside>
+    </main>
+  </section>
+
+  <section class="screen hidden" id="cookScreen">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span> Mise</div>
+      <div class="recipe-name">Pollo con salsa de ostras + arroz jazmín</div>
+      <span class="source-chip">2 porciones</span>
+      <span class="status-chip">● Cocinando</span>
+      <button class="icon-btn" id="audioBtn" aria-label="Leer el paso en voz alta">◖))</button>
+      <button class="icon-btn" id="mapBtn" aria-label="Abrir recorrido">☷</button>
+    </header>
+    <main class="workspace">
+      <article class="card focus-card">
+        <div class="meta-row"><span class="pill">Sartén grande</span><span class="pill fire">Fuego alto</span><span class="pill" id="batchPill">Tanda 1 de 2</span><span class="step-count" id="stepCount">Paso 3 de 6</span></div>
+        <h1 class="action-title" id="actionTitle">Dorá la mitad del pollo <span class="quantity">≈200 g</span> en la sartén bien caliente</h1>
+        <p class="action-note" id="actionNote">Separá los cubos para que el fondo conserve temperatura. No los muevas mientras forman costra.</p>
+        <div class="focus-bottom">
+          <div class="timer-card"><div><div class="timer-label">Tiempo orientativo</div><div class="timer-time" id="mainTimer">01:10</div></div><button class="timer-toggle" id="timerToggle" aria-label="Pausar o reanudar">Ⅱ</button></div>
+          <div class="sense"><span class="sense-icon">◉</span><div><strong id="senseTitle">Costra dorada ámbar</strong><span id="senseText">Se despega sola, sin resistencia</span></div></div>
+        </div>
+      </article>
+      <aside class="parallel-rail" aria-label="Preparaciones paralelas con desplazamiento">
+        <div class="rail-head"><span class="eyebrow">También está pasando</span><span>Deslizá ↓</span></div>
+        <article class="card station active"><div class="station-head"><div><span class="eyebrow">Arroz · espera segura</span><h3>Reposo tapado fuera del fuego</h3></div><div class="station-time" id="riceTimer">04:06</div></div><p>No destapar. El vapor termina de hinchar el grano.</p><button data-toast="Arroz enfocado sin cambiar el paso">Ver señal de punto</button></article>
+        <article class="card station"><div class="station-head"><div><span class="eyebrow">Salsa · lista</span><h3>Revolver antes de volcar</h3></div><span class="pill">En 2 pasos</span></div><p>La maicena decanta: batí 5 segundos justo antes de usar.</p><button data-toast="Recordatorio fijado para el momento de volcar">Fijar recordatorio</button></article>
+        <article class="card station next-card"><div class="station-head"><div><span class="eyebrow">Podés adelantar</span><h3>Dejá libre el plato de reserva</h3></div><span>→</span></div><p>La primera tanda sale allí mientras dorás la segunda.</p></article>
+        <div class="scroll-cue">Fin de la mesada paralela</div>
+      </aside>
+    </main>
+    <footer class="bottom-bar">
+      <button class="rescue" id="rescueBtn">Algo salió distinto</button>
+      <button class="secondary-action" id="addTime">+30 s</button>
+      <button class="done" id="doneBtn">Listo: dar vuelta y sellar →</button>
+    </footer>
+  </section>
+
+  <aside class="drawer hidden" id="rescueDrawer" aria-modal="true" role="dialog">
+    <div class="drawer-panel">
+      <div class="drawer-head"><span class="eyebrow">Rescate relacionado con la sartén</span><button class="icon-btn close">×</button></div>
+      <h2>¿El pollo largó agua?</h2>
+      <p>No avances de paso. Primero recuperá la temperatura.</p>
+      <div class="fix"><strong>Corrección inmediata</strong><p>Retirá la mitad de los trozos a un plato. Dejá el fuego alto y evaporá el líquido antes de devolverlos.</p></div>
+      <div class="fix"><strong>La próxima tanda</strong><p>Secá los cubos y dejá más espacio entre ellos.</p></div>
+      <button class="primary close" style="width:100%;margin-top:14px">Entendido, sigo cocinando</button>
+    </div>
+  </aside>
+
+  <div class="modal hidden" id="finishModal"><div class="finish"><span class="eyebrow">Cena terminada</span><h2>¿Cómo salió?</h2><p>Podés guardar la receta tal cual, añadir una observación para la próxima vez o cerrar sin conservarla.</p><div class="finish-actions"><button class="save" data-toast="Receta guardada localmente">Guardar</button><button data-toast="Nota preparada para editar">Guardar con nota</button><button data-toast="Sesión descartada">Descartar</button></div></div></div>
+  <div class="toast hidden" id="toast"></div>
+
+  <script>
+    const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+    const steps=[
+      {title:'Dorá la mitad del pollo <span class="quantity">≈200 g</span> en la sartén bien caliente',note:'Separá los cubos para que el fondo conserve temperatura. No los muevas mientras forman costra.',sense:'Costra dorada ámbar',detail:'Se despega sola, sin resistencia',time:70,button:'Listo: dar vuelta y sellar →',batch:'Tanda 1 de 2',count:'Paso 3 de 6'},
+      {title:'Dá vuelta cada cubo y sellá la segunda cara',note:'Usá pinza. Mantené el fuego alto y retiralos apenas la segunda cara tome color.',sense:'Bordes blancos y centro firme',detail:'Todavía jugoso al presionar',time:55,button:'Listo: retirar la tanda →',batch:'Tanda 1 de 2',count:'Paso 4 de 6'},
+      {title:'Retirá el pollo y revolvé la salsa durante <span class="quantity">5 segundos</span>',note:'La maicena debe volver a integrarse antes de tocar la sartén caliente.',sense:'Mezcla lisa, sin depósito',detail:'Cae en una cinta fina y uniforme',time:5,button:'Listo: incorporar la salsa →',batch:'Salsa ligadora',count:'Paso 5 de 6'}
+    ];
+    let index=0,remaining=70,running=true,last=Date.now(),rice=246;
+    function showCook(){ $('#importScreen').classList.add('hidden');$('#cookScreen').classList.remove('hidden'); }
+    function render(){const s=steps[index];$('#actionTitle').innerHTML=s.title;$('#actionNote').textContent=s.note;$('#senseTitle').textContent=s.sense;$('#senseText').textContent=s.detail;$('#doneBtn').textContent=s.button;$('#batchPill').textContent=s.batch;$('#stepCount').textContent=s.count;remaining=s.time;running=true;last=Date.now();}
+    function fmt(n){n=Math.max(0,Math.ceil(n));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+    setInterval(()=>{const now=Date.now(),delta=(now-last)/1000;last=now;if(running&&remaining>0)remaining-=delta;if(rice>0)rice-=delta;$('#mainTimer').textContent=fmt(remaining);$('#riceTimer').textContent=fmt(rice)},250);
+    $('#startCook').onclick=showCook; $('#seePlan').onclick=()=>toast('6 pasos · 3 preparaciones · 4 cronómetros');
+    $('#doneBtn').onclick=()=>{if(index<steps.length-1){index++;render()}else $('#finishModal').classList.remove('hidden')};
+    $('#timerToggle').onclick=()=>{running=!running;$('#timerToggle').textContent=running?'Ⅱ':'▶'};
+    $('#addTime').onclick=()=>{remaining+=30;toast('Se añadieron 30 segundos')};
+    $('#rescueBtn').onclick=()=>$('#rescueDrawer').classList.remove('hidden');
+    $$('.close').forEach(b=>b.onclick=()=>$('#rescueDrawer').classList.add('hidden'));
+    $('#mapBtn').onclick=()=>toast('Recorrido: arroz → dorar → salsa → integrar → servir');
+    $('#audioBtn').onclick=()=>{if('speechSynthesis'in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance($('#actionTitle').textContent+'. '+$('#senseTitle').textContent))}else toast('Audio no disponible en este navegador')};
+    $$('[data-toast]').forEach(b=>b.onclick=()=>toast(b.dataset.toast));
+    function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(window.toastT);window.toastT=setTimeout(()=>el.classList.add('hidden'),2200)}
+  </script>
+</body>
+</html>

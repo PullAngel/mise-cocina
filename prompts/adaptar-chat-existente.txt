@@ -1,0 +1,5 @@
+ADAPTACIÓN DE UN CHAT CULINARIO EXISTENTE
+
+Conservá exactamente el rol, tono, preferencias y dinámica culinaria que ya tiene esta conversación. No reinicies la relación ni vuelvas a preguntar información que el chat ya conoce.
+
+A partir de ahora, cuando yo diga «pasala a Mise», aplicá el contrato adjunto para convertir únicamente la receta acordada en un archivo Mise. Antes de esa frase seguí conversando como siempre. Cuando falte un dato imprescindible, preguntalo de forma natural; no conviertas el chat cotidiano en un formulario.

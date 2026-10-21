@@ -1,0 +1,33 @@
+name: Verificar proyecto
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Preparar pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+      - name: Verificar documentación pública
+        run: pnpm run check:public
+      - name: Ejecutar pruebas
+        run: pnpm test -- --pool=forks --maxWorkers=1 --no-file-parallelism
+      - name: Compilar
+        run: pnpm run build

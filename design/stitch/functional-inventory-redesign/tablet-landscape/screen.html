@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f1fcf5]" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Mise — Cocina en Vivo (Tablet Stand)</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Space Grotesk (Monospaced Timers & Quantities) & Plus Jakarta Sans / Inter for Clear Reading -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          },
+          colors: {
+            salvia: {
+              50: '#f1fcf5',
+              100: '#e0f8ea',
+              200: '#c3efd5',
+              300: '#94e0b7',
+              600: '#1b8a5a',
+              700: '#146f49',
+              800: '#0f5237',
+              900: '#093624',
+            },
+            terracota: {
+              500: '#dc4e23',
+              600: '#c84218',
+              700: '#a83512',
+            },
+            lino: '#fbfbf8'
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom CSS Styles -->
+<style data-purpose="base-layout">
+    body {
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    /* Knuckle friendly minimum touch targets */
+    .touch-knuckle {
+      min-height: 48px;
+      touch-action: manipulation;
+    }
+  </style>
+<!-- END: Custom CSS Styles -->
+</head>
+<body class="h-full flex flex-col font-sans text-slate-900 overflow-hidden bg-[#f1fcf5]">
+<!-- BEGIN: TopHeader -->
+<!-- Barra superior calibrada para visibilidad a 1 metro de distancia -->
+<header class="h-14 px-4 sm:px-6 bg-white border-b border-emerald-100 flex items-center justify-between shrink-0 shadow-sm z-30">
+<!-- Izquierda: Estación y Receta -->
+<div class="flex items-center gap-3">
+<div class="inline-flex items-center gap-2 bg-[#eaf8f0] px-2.5 py-1 rounded-md border border-emerald-200">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="font-mono text-xs font-bold tracking-wide text-emerald-900">ESTACIÓN 06</span>
+</div>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<div class="flex items-center gap-2">
+<h1 class="text-sm font-bold tracking-tight text-slate-900">
+          Pollo con Salsa de Ostras &amp; Arroz Jazmín
+        </h1>
+<span class="bg-slate-100 text-slate-600 font-mono text-[11px] px-2 py-0.5 rounded border border-slate-200 font-semibold">
+          2 Raciones
+        </span>
+</div>
+</div>
+<!-- Derecha: Sensores de Voz y Térmico -->
+<div class="flex items-center gap-2.5">
+<!-- Indicador Térmico Superficie -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 rounded-md border border-amber-200 text-amber-900 font-mono text-xs">
+<svg class="w-3.5 h-3.5 text-amber-700" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>195°C ÓPTIMO</span>
+</div>
+<!-- Badge Micrófono / Manos Libres -->
+<div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-100/80 rounded-md border border-emerald-300 text-emerald-950 font-bold text-xs tracking-wider">
+<svg class="w-3.5 h-3.5 text-emerald-700 animate-pulse" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+<path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
+</svg>
+<span>VOZ ACTIVA</span>
+</div>
+</div>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: MainContent -->
+<!-- Área de trabajo de 2 columnas optimizada para Tablet Apaisada (1024px) -->
+<main class="flex-1 grid grid-cols-12 gap-4 p-4 min-h-0 overflow-hidden">
+<!-- BEGIN: LeftColumn (60% Focal Cook Zone) -->
+<section class="col-span-7 flex flex-col gap-3 min-h-0">
+<!-- Ficha Principal de la Acción Activa -->
+<div class="flex-1 bg-white rounded-2xl border border-emerald-950/10 shadow-sm p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
+<!-- Fila de Metadatos del Fuego -->
+<div class="flex items-center justify-between gap-2 shrink-0">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center bg-slate-900 text-white font-mono text-[11px] font-bold px-2.5 py-1 rounded tracking-wide">
+              SEC-03 • HORNALLA GRANDE
+            </span>
+<span class="inline-flex items-center bg-orange-50 text-orange-800 border border-orange-300 font-mono text-[11px] font-bold px-2 py-1 rounded tracking-tight">
+              FUEGO ALTO [100%]
+            </span>
+</div>
+<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-xs font-semibold px-2.5 py-0.5 rounded">
+            Tanda 01 / 02
+          </span>
+</div>
+<!-- Titular Macro y Cápsula de Gramaje -->
+<div class="my-auto py-2">
+<h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-[1.2]">
+            Dorá la mitad del pollo
+            <span class="inline-flex items-center bg-amber-100 text-amber-950 border border-amber-300 px-3 py-0.5 mx-1 rounded-xl text-2xl sm:text-3xl font-mono font-black align-baseline shadow-xs">
+              (~200 g)
+            </span>
+            en la sartén bien caliente
+          </h2>
+<p class="mt-2 text-sm text-slate-600 leading-snug">
+            Distribuí los cubos sin encimar para evitar que hiervan en su propio vapor. No toques durante el primer minuto para sellar.
+          </p>
+</div>
+<!-- Cronómetro Monumental & Barra de Maillard -->
+<div class="bg-[#fcfdfd] border border-emerald-900/10 rounded-xl p-3.5 shadow-inner">
+<div class="flex items-baseline justify-between mb-1">
+<div class="flex items-center gap-1.5 font-mono text-xs text-rose-700 font-bold uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
+              T. RESTANTE SELLADO
+            </div>
+<span class="font-mono text-xs text-slate-500 font-medium">Auto-despegue asistido</span>
+</div>
+<!-- Dígitos de Temporizador -->
+<div class="flex items-center justify-between">
+<div class="font-display text-5xl sm:text-6xl font-bold tracking-tight text-slate-900 tabular-nums">
+              01:10
+            </div>
+<!-- Botones táctiles adaptados para nudillos grasosos / apurados -->
+<div class="flex items-center gap-2">
+<button class="touch-knuckle px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 border border-slate-200 text-slate-800 font-mono font-bold text-xs" type="button">
+                -10s
+              </button>
+<button class="touch-knuckle px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-mono font-bold text-xs flex items-center gap-1.5 active:scale-95 shadow-xs" type="button">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                Pausar
+              </button>
+<button class="touch-knuckle px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-95 border border-slate-200 text-slate-800 font-mono font-bold text-xs" type="button">
+                +30s
+              </button>
+</div>
+</div>
+<!-- Barra Progreso Térmico -->
+<div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mt-3 p-[1px]">
+<div class="bg-gradient-to-r from-amber-500 to-rose-600 h-full w-[45%] rounded-full transition-all duration-300"></div>
+</div>
+</div>
+<!-- Feedback Sensorial y Foto de Referencia Directa -->
+<div class="grid grid-cols-12 gap-3 mt-3 items-stretch shrink-0">
+<!-- Tarjeta Sensorial -->
+<div class="col-span-7 bg-[#fffaf5] border border-amber-200/80 rounded-xl p-3 flex flex-col justify-center">
+<div class="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-900 uppercase">
+<span class="text-base leading-none">🔥</span>
+              SEÑAL SENSORIAL CLAVE
+            </div>
+<div class="mt-1 text-xs sm:text-sm font-semibold text-slate-800 leading-snug">
+              Costra dorada ámbar • Despega sola sin resistencia
+            </div>
+<div class="mt-1 text-[11px] text-slate-500 leading-tight">
+              Si ofrece resistencia al levantar, dale 20s extra. No fuerces.
+            </div>
+</div>
+<!-- Referencia Visual en Sartén -->
+<div class="col-span-5 bg-slate-950 rounded-xl overflow-hidden border border-slate-300 relative group flex items-center justify-center">
+<img alt="Referencia visual de cubos de pollo sellados en sartén de hierro" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAucGmVF_KlXsowDca_OSqkrseNDZ-mr3JjgKCxOgJLh8TgiYgqVTisdcaNLtiMRChrGr0NdVNkRstpPyQMfUAT-fxfGvYdPABmYQTFTl5yAu05pMYZk7Gqt4FX8Iz2y2TQYEvE0gG39P6TZXY0J9K9kxdXIEvb-Fcz1W7eZdV24hv9ba0G838VMlHsYGCtlQs03KdcqTSEf6VMt_qe24WnvhkJeMxK98wDieWD4HoHrsnEgPdq7c4g"/>
+<span class="absolute bottom-1 right-1 bg-black/70 backdrop-blur-xs text-[10px] font-mono text-white px-1.5 py-0.5 rounded">
+              PUNTO EXACTO
+            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: LeftColumn -->
+<!-- BEGIN: RightColumn (40% Parallel Lines & Mise) -->
+<aside class="col-span-5 flex flex-col gap-3 min-h-0">
+<!-- Fila 1: Arroz Jazmín en Hornalla Trasera (Proceso Paralelo Crítico) -->
+<div class="bg-white rounded-2xl border border-emerald-950/10 shadow-sm p-4 flex flex-col justify-between shrink-0">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+<div>
+<h3 class="text-xs font-mono font-bold uppercase text-slate-900 tracking-wider">ARROZ JAZMÍN</h3>
+<p class="text-[11px] font-mono text-slate-500">HORNALLA TRASERA</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
+              EN REPOSO TAPADO
+            </span>
+<span class="font-display text-xl font-bold text-slate-900 tabular-nums">
+              04:03
+            </span>
+</div>
+</div>
+<p class="mt-2 text-xs text-slate-600 leading-normal">
+          Fuego apagado. El calor y vapor residual terminan de inflar el grano sin romper el almidón.
+        </p>
+<div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
+<span>VAPOR RESIDUAL ACTIVO</span>
+<button class="text-emerald-700 font-bold hover:underline flex items-center gap-1" type="button">
+            Enfocar proceso →
+          </button>
+</div>
+</div>
+<!-- Fila 2: Salsa Ligadora en Bol (Mise en Place Lista) -->
+<div class="bg-white rounded-2xl border border-emerald-950/10 shadow-sm p-4 flex flex-col justify-between flex-1 min-h-0">
+<div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+<h3 class="text-xs font-mono font-bold uppercase text-slate-900 tracking-wider">
+                SALSA LIGADORA • EN BOL
+              </h3>
+</div>
+<span class="bg-slate-100 text-slate-700 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-slate-200">
+              LISTA
+            </span>
+</div>
+<!-- Alerta de Técnica -->
+<div class="mt-2.5 p-2 bg-amber-50/80 border-l-2 border-amber-500 rounded-r-md">
+<p class="text-xs text-amber-900 font-medium">
+<strong class="font-bold text-amber-950">Aviso:</strong> Revolver con cuchara 5s antes de volcar. La fécula de maíz decanta en reposo.
+            </p>
+</div>
+<!-- Fórmulas breves -->
+<ul class="mt-3 space-y-1.5 text-xs text-slate-600">
+<li class="flex justify-between border-b border-slate-50 pb-1">
+<span>Salsa de Ostras tradicional</span>
+<span class="font-mono font-semibold text-slate-800">2 cdas</span>
+</li>
+<li class="flex justify-between border-b border-slate-50 pb-1">
+<span>Salsa de Soja oscura</span>
+<span class="font-mono font-semibold text-slate-800">1 cda</span>
+</li>
+<li class="flex justify-between">
+<span>Fécula + 40ml de agua</span>
+<span class="font-mono font-semibold text-slate-800">1 cdita</span>
+</li>
+</ul>
+</div>
+<div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
+<span>Almidón diluido en frío</span>
+<span class="text-emerald-700 font-bold">OK</span>
+</div>
+</div>
+<!-- Fila 3: Siguiente Insumo Inmediato -->
+<div class="bg-emerald-50/70 rounded-xl border border-emerald-200/70 p-3 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2 text-xs">
+<svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="font-semibold text-slate-800">Siguiente en Mesada:</span>
+<span class="text-slate-600 truncate max-w-[200px]">Cebolla de verdeo sesgada y ajo laminado</span>
+</div>
+<span class="text-[10px] font-mono font-bold bg-white text-emerald-800 px-2 py-0.5 rounded border border-emerald-200 shrink-0">
+          A MANO
+        </span>
+</div>
+</aside>
+<!-- END: RightColumn -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: BottomCommandBar -->
+<!-- Barra de control inferior táctil fija (64px) diseñada para toque seguro -->
+<footer class="h-16 px-4 sm:px-6 bg-white border-t border-emerald-950/10 flex items-center justify-between shrink-0 shadow-lg z-30">
+<!-- Info de Estado de Fase -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="bg-slate-900 text-white font-mono text-xs font-bold px-2 py-1 rounded">
+          FASE 03 / 06
+        </span>
+<span class="text-xs font-semibold text-slate-600 hidden sm:inline">
+          3 Procesos Sincronizados
+        </span>
+</div>
+<div class="hidden md:flex items-center gap-1.5 px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-600">
+<span class="text-slate-400">Decí en voz alta:</span>
+<span class="font-bold text-slate-900">"Mise, dar vuelta"</span>
+</div>
+</div>
+<!-- Botones de Acción Inmediata de Mesada -->
+<div class="flex items-center gap-2.5">
+<!-- Botón de Rescate Culposo / S.O.S Técnico -->
+<button class="touch-knuckle px-3.5 py-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-900 font-bold text-xs flex items-center gap-1.5 transition-colors" type="button">
+<svg class="w-4 h-4 text-amber-700" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path>
+</svg>
+<span>¿Algo salió distinto?</span>
+</button>
+<!-- Extensión rápida de tiempo -->
+<button class="touch-knuckle px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:scale-95 text-slate-800 font-mono font-bold text-xs shadow-xs" type="button">
+        +30s
+      </button>
+<!-- BOTÓN MONUMENTAL: Terracota Fuego #c84218 -->
+<button class="touch-knuckle px-6 py-2.5 rounded-xl bg-[#c84218] hover:bg-[#a83512] active:scale-98 text-white font-bold text-sm tracking-wide flex items-center gap-3 shadow-md shadow-orange-950/20 transition-all" type="button">
+<span class="flex items-center gap-1.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+          LISTO: DAR VUELTA Y SELLAR
+        </span>
+<span class="bg-[#a83512] px-2 py-0.5 rounded font-mono text-xs text-amber-200">
+          PASO 04 →
+        </span>
+</button>
+</div>
+</footer>
+<!-- END: BottomCommandBar -->
+</body></html>
