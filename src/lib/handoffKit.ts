@@ -43,4 +43,9 @@ export function buildAdapterPrompt(): string {
   return `${adaptExisting.trim()}\n\n${contract.trim()}`;
 }
 
+/** For long chats: the request plus the full contract, so it does not depend on messages far back. */
+export function buildDeliveryPrompt(): string {
+  return `Pasala a Mise. Aplicá este contrato ahora y respondé solo con el bloque pedido.\n\n${contract.trim()}`;
+}
+
 export const miseSchema = schema;

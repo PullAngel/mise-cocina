@@ -87,6 +87,8 @@ export type TimerState = {
   dueAt?: number;
   pausedRemainingMs?: number;
   durationMs: number;
+  /** Set once a running timer has reached its deadline. The alarm is spent: never reschedule it. */
+  finishedAt?: number;
 };
 
 export type SessionClockState = {

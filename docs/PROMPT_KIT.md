@@ -14,7 +14,9 @@ Inicio pregunta brevemente por experiencia, prioridad y nivel de iniciativa espe
 - **Técnico:** enseña técnicas, señales y causas sin perder el flujo;
 - **Calmo:** guía paso a paso, reduce carga mental y anticipa preparaciones.
 
-Las respuestas forman una parte editable del prompt. El contrato de salida es rígido e igual para todos los perfiles.
+Las respuestas forman una parte editable del prompt. El contrato de salida es rígido e igual para todos los perfiles: fija la forma exacta del JSON, la planificación previa, el uso de temporizadores (uno por paso) y la revisión final. Cada perfil agrega solo su **nivel de detalle**: Técnico es el más profundo, Práctico y Calmo son más breves, y Explorador es intermedio con las variantes en `context.decisions`.
+
+**Pedido de entrega.** En chats largos las instrucciones iniciales se alejan. Inicio ofrece «Copiar pedido de entrega», que pega el contrato completo junto con «pasala a Mise».
 
 ## Adaptar un chat existente
 

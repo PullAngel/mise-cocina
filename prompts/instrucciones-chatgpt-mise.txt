@@ -1,20 +1,63 @@
-Estas instrucciones se aplican solamente cuando yo escriba «pasala a Mise». Hasta ese momento, seguí conversando y desarrollando la receta de forma natural. No reemplaces el tono, las decisiones ni el contexto previo del chat.
+ADAPTACIÓN DE UN CHAT CULINARIO EXISTENTE
 
-Cuando yo diga «pasala a Mise»:
+Conservá exactamente el rol, tono, preferencias y dinámica culinaria que ya tiene esta conversación, incluido el nivel de detalle técnico que venías usando. No reinicies la relación ni vuelvas a preguntar información que el chat ya conoce.
 
-1. Consolidá la receta acordada y las decisiones útiles de la conversación en un único JSON compatible con `mise.recipe` versión 1.2.
-2. No inventes datos. Guardá dudas reales en `context.uncertainties`.
-3. Incluí para cada ingrediente su cantidad total, `kind`, condición opcional y política de escalado.
-4. Ordená `steps` como un recorrido completo que pueda seguirse sin haber leído toda la receta antes de empezar.
-5. Prepará antes del primer uso todo ingrediente que haya que lavar, cortar, picar, rallar, medir o decidir. Si sugerís un ingrediente opcional, incorporalo también en su preparación previa; no lo menciones por primera vez cuando ya sea tarde.
-6. Cada paso debe tener un `shortLabel` breve, acción autosuficiente, cantidades usadas en ese momento, componente o estación, calor cuando aplique, `startWhen`, señales sensoriales en `doneWhen`, temporizador opcional, dependencias, tareas paralelas, errores previsibles, rescates y una frase breve para audio.
-7. Usá `dependsOn` y `canRunWith` para conservar trabajo paralelo sin convertir el recorrido en confirmaciones obligatorias.
-8. Mantené exactamente los identificadores entre ingredientes, componentes, pasos y dependencias.
+A partir de ahora, cuando yo diga «pasala a Mise», aplicá el contrato adjunto para convertir únicamente la receta acordada en un archivo Mise. El contrato fija la estructura; el nivel de detalle sigue siendo el de este chat. Antes de esa frase seguí conversando como siempre. Cuando falte un dato imprescindible, preguntalo de forma natural; no conviertas el chat cotidiano en un formulario.
 
-Entregá solamente el resultado final entre estos delimitadores:
+CONTRATO DE ENTREGA PARA MISE 1.2
+
+Estas reglas se activan solamente cuando la persona diga «pasala a Mise». Hasta entonces conversá con naturalidad y no conviertas cada respuesta en datos estructurados. Si la persona te pega este contrato junto con «pasala a Mise», aplicalo ahora aunque la conversación sea larga.
+
+QUÉ ENTREGAR
+Un único JSON válido contra el archivo mise-recipe.schema.json adjunto. Incluí solo lo acordado en la conversación: lo propuesto y no aceptado, y las dudas reales, van en context.uncertainties. No asumas ingredientes de recetas anteriores.
+
+1. PLANIFICÁ ANTES DE ESCRIBIR (sin mostrar el plan)
+Resolvé el trabajo completo: mise en place, qué depende de qué, qué corre en paralelo, qué hornalla o recipiente ocupa cada tarea, qué espera sin perder calidad y qué debe terminar junto. Después escribí steps en el orden en que una persona los hace. El orden de steps y el texto de startWhen son lo que la persona realmente ve.
+
+2. FORMA EXACTA DEL JSON (los errores más comunes)
+{"format":"mise.recipe","version":"1.2","recipeId":"pollo-ostras-2p","revision":1,"locale":"es-AR","title":"…",
+ "servings":{"count":2,"note":"…"},
+ "context":{"goal":"…","equipment":[],"constraints":[],"dietary":[],"availableIngredients":[],"decisions":[],"uncertainties":[]},
+ "ingredients":[{"id":"arroz","name":"arroz largo fino","amount":{"value":190,"unit":"g"},"kind":"grain","scaling":"linear"},
+                {"id":"sal","name":"sal","amount":{"text":"a gusto"},"kind":"seasoning","scaling":"to-taste"}],
+ "components":[{"id":"arroz-parte","title":"Arroz","role":"garnish","preferredStation":"olla"}],
+ "steps":[{"id":"cocer-arroz","componentId":"arroz-parte","shortLabel":"Cocer arroz","action":"…","amounts":[{"ingredientId":"arroz","value":190,"unit":"g"}],"heat":"medio-bajo","startWhen":"…","doneWhen":[{"sense":"visual","cue":"…"}],"timer":{"label":"Cocción del arroz","durationSeconds":720,"startTrigger":"user-confirmed"},"dependsOn":[],"canRunWith":[],"avoid":[],"rescues":[{"when":"…","do":"…"}],"voice":"…"}],
+ "finish":{"storage":"…","reheat":"…"}}
+- servings es un objeto {count}, nunca un número. amount es un objeto: {value, unit}, o {min, max, unit}, o {text} para «a gusto»; nunca un texto suelto.
+- finish admite solo storage, transport y reheat (textos). No agregues otras propiedades en ningún objeto; si algo no encaja en el esquema, escribilo como texto dentro de un campo existente.
+- Ids en minúsculas, sin tildes ni espacios (a-z, 0-9, guion). Cada id es único y las referencias (componentId, ingredientId, dependsOn, canRunWith) apuntan a ids que existen.
+- version "1.2", revision 1, locale "es-AR". No uses status. kind y role solo con los valores del esquema; role se elige por función en el plato (main, sauce, garnish, salad, drink, dessert, topping, other).
+- doneWhen tiene al menos una señal. shortLabel de 2 a 5 palabras (máximo 32 caracteres). durationSeconds es un entero en segundos.
+
+3. QUÉ MUESTRA MISE AL COCINAR (poné cada dato donde sirve)
+Se ve: action (título del paso), amounts, heat, startWhen («Empezá cuando»), doneWhen («Está listo cuando»), timer.label, avoid y rescues (en «Información extra») y voice (se lee en voz alta). Hoy NO se muestran dependsOn, canRunWith, preferredStation, hold ni finish: completalos igual, pero lo que la persona necesite saber mientras cocina decilo con palabras, por ejemplo en startWhen: «mientras reposa el arroz, …». La conservación y el recalentado, además de en finish, van en un último paso de guardar o servir.
+voice es breve, sin símbolos ni abreviaturas, y dice la señal clave del paso.
+
+4. UN PASO ES AUTOSUFICIENTE
+Cada paso se puede ejecutar sin releer los anteriores: qué hacer físicamente, con qué cantidad, en qué recipiente, a qué calor y cómo reconocer que terminó. Los pasos que cambian el resultado (dorar, reducir, emulsionar, punto de cocción) llevan la técnica bien explicada; los triviales, no. El nivel de detalle lo marca el perfil del ayudante; si no hay perfil, usá un nivel práctico. amounts lleva solo lo que se usa o se agrega en ese paso, en las porciones base. Escribí el nombre del ingrediente como figura en ingredients[].name: así Mise lo reconoce y lo resalta.
+
+5. TEMPORIZADORES
+- Cada paso admite un solo timer. Si hay varias intervenciones (dorar un lado, girar, reposar), hacé un paso por intervención o espera.
+- Usalos para intervenciones («Girar el pollo») y esperas sin intervención («Reposo del arroz»). Cuando lo correcto lo indica el alimento (reducir hasta que napee la cuchara), no pongas timer y dejá la señal en doneWhen.
+- El label dice qué se controla y suena en la notificación con la app cerrada: tiene que entenderse solo.
+- Los tiempos son orientativos: en doneWhen decí que manda la señal, no el reloj. startTrigger siempre "user-confirmed".
+
+6. ORDEN, PARALELISMO Y FINAL
+- dependsOn lista pasos anteriores obligatorios; nunca un paso posterior ni un ciclo. canRunWith solo marca tareas de poca atención que pueden convivir con este paso.
+- No pongas a la vez dos tareas de atención constante, ni dos que necesiten la misma hornalla o recipiente.
+- Todo ingrediente que haya que lavar, cortar, rallar, medir o decidir se prepara antes de su primer uso, incluidos los opcionales aceptados. No dejes cortar ajo cuando el ajo ya se está quemando.
+- Planificá el final: qué componente espera (hold: modo en texto y qualityWindowMinutes en minutos), qué se termina justo antes de servir y qué se separa para guardar o transportar.
+
+7. REVISÁ ANTES DE ENTREGAR
+Técnico: JSON válido (comillas rectas, sin comentarios, sin comas finales, sin saltos de línea dentro de textos), sin propiedades extra, campos obligatorios completos, ids y referencias existentes, timers con sus tres campos.
+Práctico: nada se usa antes de prepararse, la secuencia es ejecutable con el equipo declarado, las señales son observables, los componentes terminan coordinados.
+Si podés ejecutar una validación contra el esquema, hacela. Si no, revisá a mano cada punto. Ante la duda sobre un campo opcional, omitilo en lugar de inventarlo.
+
+ENTREGA
+Respondé solamente con este bloque, sin texto antes ni después. Dentro va el JSON sin marcas de código (sin ```):
 
 ---MISE/1---
 { JSON válido }
 ---END-MISE---
 
-Si podés crear archivos, adjuntá además el mismo JSON como `nombre-de-receta.mise.json`. Si te adjunto un ejemplo Mise, usalo como referencia estructural, no como contenido culinario.
+Si podés crear archivos, adjuntá además el mismo contenido como nombre-de-receta.mise.json. Si la persona te pega un error de importación, corregí solo ese dato y devolvé el bloque completo otra vez.

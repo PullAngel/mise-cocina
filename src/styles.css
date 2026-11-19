@@ -596,6 +596,8 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 .time-cell em { position: absolute; right: 8px; top: 8px; color: var(--pulp-navy); font-size: 8px; font-style: normal; font-weight: 700; text-transform: uppercase; }
 .time-cell.part { background-size: 180% 180%; }
 .time-cell.part::after { content: ""; width: var(--timer-progress); height: 6px; position: absolute; left: 0; bottom: 0; border-radius: 0 4px 4px 0; background: var(--pulp-navy); }
+.time-cell.part.finished { background: var(--ember); box-shadow: 4px 4px 0 var(--pulp-ivory); }
+.time-cell.part.finished::after { width: 100%; }
 .timer-calm { background: radial-gradient(circle at 20% 30%, #a8bcae 0 23%, transparent 24%), radial-gradient(circle at 76% 65%, #ead995 0 28%, transparent 29%), #f1e7bd; }
 .timer-active { background: radial-gradient(circle at 20% 30%, #e8aa40 0 23%, transparent 24%), radial-gradient(circle at 76% 65%, #df7f35 0 28%, transparent 29%), #f1c761; }
 .timer-alert { background: radial-gradient(circle at 20% 30%, #ed8a3f 0 23%, transparent 24%), radial-gradient(circle at 76% 65%, #f05a47 0 28%, transparent 29%), #f4c84a; }

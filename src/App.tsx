@@ -3,12 +3,12 @@ import type { ChangeEvent, CSSProperties, DragEvent, PointerEvent as ReactPointe
 import { parseRecipeInput, readRecipeFile } from "./lib/importRecipe";
 import { scaledQuantity } from "./lib/ingredients";
 import { clearActiveSession, loadActiveSession, loadRecentRecipes, rememberRecipe, saveActiveSession } from "./lib/storage";
-import { addTime, createTimer, formatDuration, isRunning, pauseTimer, remainingMs, startTimer } from "./lib/timer";
+import { addTime, compareTimers, createTimer, formatDuration, hasExpired, isFinished, isRunning, pauseTimer, remainingMs, resetTimer, settleTimer, startTimer } from "./lib/timer";
 import { enterKitchenDisplay, leaveKitchenDisplay } from "./platform/display";
 import { getDeviceStatus, type DeviceStatus } from "./platform/deviceStatus";
 import { selectionHaptic } from "./platform/haptics";
 import {
-  cancelTimerNotification,
+  silenceTimerNotification,
   configureNotificationChannel,
   listenForTimerNotificationActions,
   notificationReadiness,
@@ -24,7 +24,7 @@ import { currentOrientation, setOrientationLocked } from "./platform/orientation
 import { configureSilentAlarmChannel, requestSilentAlarmAccess } from "./platform/silentAlerts";
 import type { ActiveSession, Component, ComponentRole, Ingredient, IngredientKind, MiseRecipe, RecentRecipe, RecipeStep, SessionClockState, TimerState } from "./types";
 import { preloadedRecipes } from "./data/preloadedRecipes";
-import { buildAdapterPrompt, buildChefPrompt, miseSchema, profileInfo, recommendProfile, type ChefAnswers, type ChefProfile } from "./lib/handoffKit";
+import { buildAdapterPrompt, buildChefPrompt, buildDeliveryPrompt, miseSchema, profileInfo, recommendProfile, type ChefAnswers, type ChefProfile } from "./lib/handoffKit";
 
 type View = "import" | "review" | "cook";
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
@@ -135,6 +135,14 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
       showNotice("No se pudo copiar. Probá Guardar o compartir.");
     }
   };
+  const copyDelivery = async () => {
+    try {
+      await copyText(buildDeliveryPrompt());
+      showNotice("Pedido de entrega copiado. Pegalo en el chat cuando la receta esté lista.");
+    } catch {
+      showNotice("No se pudo copiar el pedido de entrega.");
+    }
+  };
   const shareFile = async (filename: string, content: string, mimeType: string, title: string) => {
     try {
       await exportTextFile(filename, content, mimeType, title);
@@ -156,7 +164,7 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
         <div className="profile-grid">{(Object.keys(profileInfo) as ChefProfile[]).map(id => <button className={profile === id ? "selected" : ""} onClick={() => setProfile(id)} key={id}><b>{profileInfo[id].name}</b><span>{profileInfo[id].description}</span></button>)}</div>
       </div> : <p className="adapter-copy">Conserva el tono y la memoria de tu chat culinario. Solo agrega el contrato de entrega cuando escribas «pasala a Mise».</p>}
       <div className="kit-summary"><span>Necesitás solamente</span><b>1 prompt + mise-recipe.schema.json</b></div>
-      <div className="handoff-actions"><button className="primary" onClick={copyPrompt}>Copiar prompt</button><button className="ghost" onClick={() => shareFile(kitMode === "existing" ? "mise-adaptar-chat.txt" : `mise-chef-${profile}.txt`, prompt, "text/plain", "Guardar prompt Mise")}>Guardar o compartir prompt</button><button className="ghost" onClick={() => shareFile("mise-recipe.schema.json", miseSchema, "application/json", "Guardar esquema Mise")}>Guardar o compartir esquema</button></div>
+      <div className="handoff-actions"><button className="primary" onClick={copyPrompt}>Copiar prompt</button><button className="ghost" onClick={() => shareFile(kitMode === "existing" ? "mise-adaptar-chat.txt" : `mise-chef-${profile}.txt`, prompt, "text/plain", "Guardar prompt Mise")}>Guardar o compartir prompt</button><button className="ghost" onClick={copyDelivery}>Copiar pedido de entrega</button><button className="ghost" onClick={() => shareFile("mise-recipe.schema.json", miseSchema, "application/json", "Guardar esquema Mise")}>Guardar o compartir esquema</button></div>
     </section>
     <section className="load-card">
       <div className="card-heading"><p className="eyebrow">1 · Abrir receta</p><h2>Llevála a la mesada</h2><p>Usá el archivo que te entregó ChatGPT o pegá el bloque Mise.</p></div>
@@ -269,7 +277,8 @@ function amountForStep(ingredient: Ingredient, value: number, unit: string, orig
 function TimerControl({ step, timer, now, onChange, onStart }: { step: RecipeStep; timer?: TimerState; now: number; onChange: (timer: TimerState) => void; onStart?: () => void }) {
   if (!timer) return <div className="step-rhythm"><span>Ritmo</span><strong>Guiate por la señal física</strong></div>;
   const remaining = remainingMs(timer, now);
-  const running = isRunning(timer) && remaining > 0;
+  const finished = isFinished(timer, now);
+  const running = isRunning(timer) && !finished;
   const progress = timerProgress(timer, now);
   const timerStyle = { "--timer-progress": `${progress.percent}%` } as CSSProperties;
   const update = async (next: TimerState) => {
@@ -279,12 +288,12 @@ function TimerControl({ step, timer, now, onChange, onStart }: { step: RecipeSte
       onStart?.();
       await scheduleTimerNotification(next, step.timer?.label ?? step.action);
     }
-    else await cancelTimerNotification(next.notificationId);
+    else await silenceTimerNotification(next.notificationId);
   };
-  return <div className={`step-timer timer-${progress.phase} ${running ? "running" : ""} ${remaining === 0 ? "finished" : ""} ${remaining > 0 && remaining <= 5000 ? "timer-near-end" : ""}`} style={timerStyle}>
+  return <div className={`step-timer timer-${progress.phase} ${running ? "running" : ""} ${finished ? "finished" : ""} ${remaining > 0 && remaining <= 5000 ? "timer-near-end" : ""}`} style={timerStyle}>
     <div><span>{step.timer?.label}</span><strong className="flowing-time">{formatDuration(remaining)}</strong><small>{progress.percent} % consumido</small></div>
     <div className="timer-actions">
-      <button onClick={() => update(running ? pauseTimer(timer) : startTimer(timer))}>{running ? "Pausar" : remaining === 0 ? "Reiniciar" : "Iniciar"}</button>
+      <button onClick={() => update(running ? pauseTimer(timer) : startTimer(timer))}>{running ? "Pausar" : finished ? "Reiniciar" : "Iniciar"}</button>
       <button onClick={() => update(addTime(timer, 30_000))}>+30 s</button>
     </div>
   </div>;
@@ -374,11 +383,30 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     return () => { active = false; window.clearInterval(id); };
   }, []);
 
+  // Timers that reached their deadline become "finished" and are never scheduled again.
+  // If we only notice long after the deadline (app was closed), the alarm already rang: clear it.
+  useEffect(() => {
+    const expired = Object.values(session.timers).filter(timer => hasExpired(timer, now));
+    if (expired.length === 0) return;
+    setSession(previous => {
+      if (!previous) return previous;
+      const timers = { ...previous.timers };
+      expired.forEach(timer => { const current = timers[timer.stepId]; if (current) timers[timer.stepId] = settleTimer(current, Date.now()); });
+      return { ...previous, timers, updatedAt: Date.now() };
+    });
+    expired.filter(timer => now - (timer.dueAt ?? now) > 5_000).forEach(timer => { void silenceTimerNotification(timer.notificationId); });
+  }, [now, session.timers, setSession]);
+
+  // Only (re)schedule alarms for deadlines in the future, and only when the deadline changed.
+  const scheduledDeadlines = useRef<Record<string, number>>({});
   useEffect(() => {
     if (readiness !== "native-ready") return;
     recipe.steps.forEach(candidate => {
       const timer = session.timers[candidate.id];
-      if (timer?.dueAt) scheduleTimerNotification(timer, candidate.timer?.label ?? candidate.action);
+      if (!timer?.dueAt || timer.dueAt <= Date.now()) return;
+      if (scheduledDeadlines.current[candidate.id] === timer.dueAt) return;
+      scheduledDeadlines.current[candidate.id] = timer.dueAt;
+      void scheduleTimerNotification(timer, candidate.timer?.label ?? candidate.action);
     });
   }, [readiness, recipe.steps, session.timers]);
 
@@ -554,7 +582,7 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     setTimer(stepId, next);
     const timerStep = recipe.steps.find(candidate => candidate.id === stepId);
     if (next.dueAt) await scheduleTimerNotification(next, timerStep?.timer?.label ?? timerStep?.action ?? "Cronómetro");
-    else await cancelTimerNotification(next.notificationId);
+    else await silenceTimerNotification(next.notificationId);
   };
   const onTimerPointerDown = (event: ReactPointerEvent<HTMLElement>, stepId: string) => {
     const state = { stepId, x: event.clientX, y: event.clientY, opened: false } as NonNullable<typeof timerHold.current>;
@@ -580,7 +608,12 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     timerHold.current = undefined;
     if (!state.opened) {
       if (stepId === "__session__") toggleSessionClock();
-      else scrollTo(recipe.steps.findIndex(candidate => candidate.id === stepId));
+      else {
+        const tapped = session.timers[stepId];
+        // Tapping a finished timer acknowledges it: silence the alarm and take it off the ribbon.
+        if (tapped && isFinished(tapped)) void applyTimerChange(stepId, resetTimer(tapped));
+        scrollTo(recipe.steps.findIndex(candidate => candidate.id === stepId));
+      }
     }
   };
   const onSecondaryScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -677,7 +710,7 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     setTab(dx < 0 ? "ingredients" : "recipe");
     selectionHaptic();
   };
-  const widgetTimers = recipe.steps.map((candidate, index) => ({ candidate, index, timer: session.timers[candidate.id] })).filter(item => item.timer && (item.timer.dueAt || (item.timer.pausedRemainingMs ?? item.timer.durationMs) < item.timer.durationMs));
+  const widgetTimers = recipe.steps.map((candidate, index) => ({ candidate, index, timer: session.timers[candidate.id] })).filter(item => item.timer && (item.timer.dueAt || item.timer.finishedAt || (item.timer.pausedRemainingMs ?? item.timer.durationMs) < item.timer.durationMs)).sort((a, b) => compareTimers(a.timer!, b.timer!, now) || a.index - b.index);
   const elapsed = sessionElapsed(session, now);
   const sessionClockRunning = Boolean(session.sessionClock?.runningSince);
   const missingIds = session.missingIngredientIds ?? [];
@@ -695,7 +728,7 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     <div className="cook-stage" onPointerDown={onStagePointerDown} onPointerUp={onStagePointerUp} onPointerCancel={() => { swipeStart.current = null; }} onClickCapture={event => { if (suppressSwipeClick.current) { event.preventDefault(); event.stopPropagation(); } }}>
     {tab === "ingredients" ? <IngredientsView session={session} setServings={setServings} toggleMissing={toggleMissing} /> : <main className="recipe-workspace">
       <aside className={`secondary-pane ${secondaryCollapsed ? "heading-collapsed" : ""}`}><div className="secondary-heading"><strong>Recorrido</strong><span>{session.completedStepIds.length}/{recipe.steps.length} hechos</span></div><div className="control-points" onScroll={onSecondaryScroll}>{recipe.steps.map((candidate, index) => { const done = session.completedStepIds.includes(candidate.id); const component = recipe.components.find(item => item.id === candidate.componentId); return <div key={candidate.id} style={componentStyle(componentRole(component))} className={`control-point ${index === currentIndex ? "active" : ""} ${done ? "done" : ""}`}><button className="point-main" onClick={() => scrollTo(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{stepSummary(candidate)}</strong><small>{component?.title}</small></div>{candidate.rescues.length + candidate.avoid.length > 0 && <i aria-label="Tiene información extra">◌</i>}</button><button className={`check-step ${done ? "checked" : ""}`} onClick={() => toggleDone(candidate.id)} aria-label={done ? "Cambiar a pendiente" : "Cambiar a hecho"}>{done ? "✓" : ""}</button></div>; })}</div></aside>
-      <div className="time-ribbon" aria-label="Zona de widgets"><button className={`time-cell total ${sessionClockRunning ? "running" : ""}`} onPointerDown={event => onTimerPointerDown(event, "__session__")} onPointerMove={onTimerPointerMove} onPointerUp={() => onTimerPointerUp("__session__")} onPointerCancel={() => { if (timerHold.current?.timer) clearTimeout(timerHold.current.timer); timerHold.current = undefined; }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleSessionClock(); } }}><span>Total de sesión</span><strong className="flowing-time">{formatDuration(elapsed)}</strong><em>{sessionClockRunning ? "Pausar" : elapsed > 0 ? "Continuar" : "Empezar"}</em></button>{widgetTimers.map(({ candidate, timer }) => { const progress = timerProgress(timer, now); const remaining = remainingMs(timer, now); const style = { "--timer-progress": `${progress.percent}%` } as CSSProperties; return <button key={candidate.id} className={`time-cell part timer-${progress.phase} ${isRunning(timer) ? "running" : "paused"} ${remaining > 0 && remaining <= 5000 ? "timer-near-end" : ""}`} style={style} onPointerDown={event => onTimerPointerDown(event, candidate.id)} onPointerMove={onTimerPointerMove} onPointerUp={() => onTimerPointerUp(candidate.id)} onPointerCancel={() => { if (timerHold.current?.timer) clearTimeout(timerHold.current.timer); timerHold.current = undefined; }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); scrollTo(recipe.steps.findIndex(item => item.id === candidate.id)); } }}><span>{candidate.timer?.label ?? stepSummary(candidate)}</span><strong className="flowing-time">{formatDuration(remaining)}</strong><em>{remaining === 0 ? "Listo" : isRunning(timer) ? `${progress.percent} %` : "Pausado"}</em></button>; })}{widgetTimers.length === 0 && !reader.active && <div className="time-cell empty"><span>Temporizadores</span><strong>Sin relojes activos</strong><small>Iniciá uno dentro de un paso.</small></div>}{reader.active && <div className="reader-widget"><span>Lectura de receta</span><b>{String(reader.stepIndex + 1).padStart(2, "0")} · {stepSummary(recipe.steps[reader.stepIndex])}</b><div><button onClick={() => moveReader(-1)} disabled={reader.stepIndex === 0} aria-label="Lectura anterior">◀</button><button onClick={toggleReader}>{reader.playing ? "Pausa" : "Seguir"}</button><button onClick={() => moveReader(1)} disabled={reader.stepIndex === recipe.steps.length - 1} aria-label="Lectura siguiente">▶</button><button onClick={stopReader} aria-label="Detener lectura">■</button></div></div>}</div>
+      <div className="time-ribbon" aria-label="Zona de widgets"><button className={`time-cell total ${sessionClockRunning ? "running" : ""}`} onPointerDown={event => onTimerPointerDown(event, "__session__")} onPointerMove={onTimerPointerMove} onPointerUp={() => onTimerPointerUp("__session__")} onPointerCancel={() => { if (timerHold.current?.timer) clearTimeout(timerHold.current.timer); timerHold.current = undefined; }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleSessionClock(); } }}><span>Total de sesión</span><strong className="flowing-time">{formatDuration(elapsed)}</strong><em>{sessionClockRunning ? "Pausar" : elapsed > 0 ? "Continuar" : "Empezar"}</em></button>{widgetTimers.map(({ candidate, timer }) => { const progress = timerProgress(timer, now); const remaining = remainingMs(timer, now); const style = { "--timer-progress": `${progress.percent}%` } as CSSProperties; return <button key={candidate.id} className={`time-cell part timer-${progress.phase} ${isFinished(timer, now) ? "finished" : isRunning(timer) ? "running" : "paused"} ${remaining > 0 && remaining <= 5000 ? "timer-near-end" : ""}`} style={style} onPointerDown={event => onTimerPointerDown(event, candidate.id)} onPointerMove={onTimerPointerMove} onPointerUp={() => onTimerPointerUp(candidate.id)} onPointerCancel={() => { if (timerHold.current?.timer) clearTimeout(timerHold.current.timer); timerHold.current = undefined; }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); scrollTo(recipe.steps.findIndex(item => item.id === candidate.id)); } }}><span>{candidate.timer?.label ?? stepSummary(candidate)}</span><strong className="flowing-time">{formatDuration(remaining)}</strong><em>{isFinished(timer, now) ? "Listo · tocá" : isRunning(timer) ? `${progress.percent} %` : "Pausado"}</em></button>; })}{widgetTimers.length === 0 && !reader.active && <div className="time-cell empty"><span>Temporizadores</span><strong>Sin relojes activos</strong><small>Iniciá uno dentro de un paso.</small></div>}{reader.active && <div className="reader-widget"><span>Lectura de receta</span><b>{String(reader.stepIndex + 1).padStart(2, "0")} · {stepSummary(recipe.steps[reader.stepIndex])}</b><div><button onClick={() => moveReader(-1)} disabled={reader.stepIndex === 0} aria-label="Lectura anterior">◀</button><button onClick={toggleReader}>{reader.playing ? "Pausa" : "Seguir"}</button><button onClick={() => moveReader(1)} disabled={reader.stepIndex === recipe.steps.length - 1} aria-label="Lectura siguiente">▶</button><button onClick={stopReader} aria-label="Detener lectura">■</button></div></div>}</div>
       <section className="recipe-document" ref={mainRef} onScroll={onMainScroll} aria-label="Receta completa"><div className="document-intro"><p className="eyebrow green">Receta completa · desplazamiento libre</p><h1>{recipe.title}</h1><p>{recipe.context.goal}</p><button className="global-reader" onClick={() => playReaderStep(0)}>▶ Leer receta completa</button></div>{recipe.steps.map((candidate, index) => {
         const done = session.completedStepIds.includes(candidate.id);
         const station = recipe.components.find(item => item.id === candidate.componentId);
@@ -707,7 +740,7 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     {sheet === "options" && <Sheet onClose={() => setSheet(null)} labelledBy="options-title"><div className="sheet-heading"><div><p className="eyebrow green">Fuera del flujo principal</p><h2 id="options-title">Opciones</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="option-list"><button onClick={() => enterKitchenDisplay()}>Pantalla completa <span>Oculta controles del navegador</span></button><button onClick={() => setSheet("alerts")}>Alarmas y sonido <span>{readiness === "native-ready" ? "Alarmas exactas listas" : "Requiere configuración"} · {silentReady ? "pueden atravesar No molestar" : "respetan el modo silencio"}</span></button>{installEvent && <button onClick={() => installEvent.prompt()}>Instalar aplicación <span>Usar sin barras del navegador</span></button>}<button className="quiet-danger" onClick={onFinish}>Cerrar receta actual <span>Borra esta única sesión del teléfono</span></button></div></Sheet>}
     {sheet === "alerts" && <Sheet onClose={() => setSheet(null)} labelledBy="alerts-title"><div className="sheet-heading"><div><p className="eyebrow green">Configuración del teléfono</p><h2 id="alerts-title">Alarmas persistentes</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><p>Los relojes se recuperan siempre. Estos permisos permiten que además avisen fuera de Mise.</p><div className="permission-list"><button onClick={setUpAlerts}><b>{readiness === "native-ready" ? "✓" : "1"}</b><span><strong>Notificaciones y hora exacta</strong><small>Para avisar con la aplicación cerrada.</small></span></button><button onClick={async () => { await requestSilentAlarmAccess(); }}><b>{silentReady ? "✓" : "2"}</b><span><strong>Sonar en silencio o No molestar</strong><small>Android mostrará un permiso especial. El volumen de alarmas sigue bajo tu control.</small></span></button></div></Sheet>}
     {sheet === "step" && sheetStep && <Sheet onClose={() => setSheet(null)} labelledBy="step-options-title"><div className="sheet-heading"><div><p className="eyebrow green">Paso {String(recipe.steps.indexOf(sheetStep) + 1).padStart(2, "0")}</p><h2 id="step-options-title">{stepSummary(sheetStep)}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="option-list"><button onClick={() => speak(readerText(recipe.steps.indexOf(sheetStep)), recipe.locale, `mise-step-${sheetStep.id}`)}>Escuchar este paso <span>Lee solo esta acción y su señal de punto.</span></button><button onClick={() => { void playReaderStep(recipe.steps.indexOf(sheetStep)); setSheet(null); }}>Leer desde aquí <span>Continúa con los pasos siguientes.</span></button><button onClick={() => { setTab("ingredients"); setSheet(null); }}>Ver ingredientes <span>Abre cantidades totales y por estación.</span></button>{sheetTimer && <button onClick={() => openTimerSheet(sheetStep.id)}>Controlar temporizador <span>{formatDuration(remainingMs(sheetTimer, now))}</span></button>}<button onClick={() => { toggleDone(sheetStep.id); setSheet(null); }}>{session.completedStepIds.includes(sheetStep.id) ? "Cambiar a pendiente" : "Cambiar a hecho"}<span>No mueve el documento.</span></button></div></Sheet>}
-    {sheet === "timer" && sheetStep && sheetTimer && <Sheet onClose={() => setSheet(null)} labelledBy="timer-options-title"><div className="sheet-heading"><div><p className="eyebrow green">{sheetStep.timer?.label ?? "Temporizador"}</p><h2 id="timer-options-title">{formatDuration(remainingMs(sheetTimer, now))}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="timer-sheet-actions"><button onClick={() => applyTimerChange(sheetStep.id, isRunning(sheetTimer) ? pauseTimer(sheetTimer) : startTimer(sheetTimer))}>{isRunning(sheetTimer) ? "Pausar" : "Continuar"}</button><button onClick={() => applyTimerChange(sheetStep.id, addTime(sheetTimer, 30_000))}>+30 s</button><button onClick={() => applyTimerChange(sheetStep.id, addTime(sheetTimer, -30_000))}>−30 s</button><button onClick={() => applyTimerChange(sheetStep.id, startTimer(createTimer(sheetStep.id, sheetTimer.durationMs / 1000, sheetTimer.notificationId)))}>Reiniciar</button><button onClick={() => { applyTimerChange(sheetStep.id, createTimer(sheetStep.id, sheetTimer.durationMs / 1000, sheetTimer.notificationId)); setSheet(null); }}>Cancelar</button><button onClick={() => { scrollTo(recipe.steps.indexOf(sheetStep)); setSheet(null); }}>Volver al paso</button></div></Sheet>}
+    {sheet === "timer" && sheetStep && sheetTimer && <Sheet onClose={() => setSheet(null)} labelledBy="timer-options-title"><div className="sheet-heading"><div><p className="eyebrow green">{sheetStep.timer?.label ?? "Temporizador"}</p><h2 id="timer-options-title">{formatDuration(remainingMs(sheetTimer, now))}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="timer-sheet-actions"><button onClick={() => applyTimerChange(sheetStep.id, isRunning(sheetTimer) ? pauseTimer(sheetTimer) : startTimer(sheetTimer))}>{isRunning(sheetTimer) ? "Pausar" : isFinished(sheetTimer, now) ? "Reiniciar" : "Continuar"}</button><button onClick={() => applyTimerChange(sheetStep.id, addTime(sheetTimer, 30_000))}>+30 s</button><button onClick={() => applyTimerChange(sheetStep.id, addTime(sheetTimer, -30_000))}>−30 s</button><button onClick={() => applyTimerChange(sheetStep.id, startTimer(resetTimer(sheetTimer)))}>Reiniciar</button><button onClick={() => { applyTimerChange(sheetStep.id, resetTimer(sheetTimer)); setSheet(null); }}>Cancelar</button><button onClick={() => { scrollTo(recipe.steps.indexOf(sheetStep)); setSheet(null); }}>Volver al paso</button></div></Sheet>}
     {sheet === "session-clock" && <Sheet onClose={() => setSheet(null)} labelledBy="session-clock-title"><div className="sheet-heading"><div><p className="eyebrow green">Total de sesión</p><h2 id="session-clock-title">{formatDuration(elapsed)}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="timer-sheet-actions"><button onClick={toggleSessionClock}>{sessionClockRunning ? "Pausar" : "Continuar"}</button><button onClick={() => adjustSessionClock(60_000)}>+1 min</button><button onClick={() => adjustSessionClock(-60_000)}>−1 min</button><button onClick={resetSessionClock}>Reiniciar</button></div></Sheet>}
     {showGestureHint && <div className="gesture-hint" role="status"><b>Atajos de los pasos</b><span>Mantené la mitad izquierda para opciones · doble toque a la derecha para Pendiente/Hecho.</span></div>}
   </div>;
@@ -771,7 +804,7 @@ export default function App() {
   };
 
   const finish = async () => {
-    if (session) await Promise.all(Object.values(session.timers).map(timer => cancelTimerNotification(timer.notificationId)));
+    if (session) await Promise.all(Object.values(session.timers).map(timer => silenceTimerNotification(timer.notificationId)));
     await clearActiveSession(); await leaveKitchenDisplay(); setSession(undefined); setPending(undefined); setView("import");
   };
 

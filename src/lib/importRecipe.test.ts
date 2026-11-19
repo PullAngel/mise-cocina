@@ -29,4 +29,40 @@ describe("recipe handoff", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toContain("ingrediente inexistente");
   });
+
+  it("accepts JSON wrapped in a code fence inside the delimiters", () => {
+    const result = parseRecipeInput("---MISE/1---\n```json\n" + JSON.stringify(demo) + "\n```\n---END-MISE---");
+    expect(result.ok).toBe(true);
+  });
+
+  it("names the offending property so it can be pasted back to the assistant", () => {
+    const extra = structuredClone(demo) as Record<string, any>;
+    extra.finish.tip = "x";
+    const result = parseRecipeInput(JSON.stringify(extra));
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toContain("«tip»");
+  });
+
+  it("rejects servings given as a plain number with a readable location", () => {
+    const wrong = structuredClone(demo) as Record<string, any>;
+    wrong.servings = 2;
+    const result = parseRecipeInput(JSON.stringify(wrong));
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toContain("/servings");
+  });
+
+  it("warns, without blocking, when a step depends on a later step", () => {
+    const swapped = structuredClone(demo) as Record<string, any>;
+    swapped.steps[0].dependsOn = [swapped.steps[1].id];
+    const result = parseRecipeInput(JSON.stringify(swapped));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.warnings.join(" ")).toContain("depende de un paso que aparece después");
+  });
+
+  it("does not warn about order in the reference recipes", () => {
+    [demo, tamarindChicken].forEach(recipe => {
+      const result = parseRecipeInput(JSON.stringify(recipe));
+      expect(result.ok && result.warnings.some(item => item.includes("revisá el orden"))).toBe(false);
+    });
+  });
 });

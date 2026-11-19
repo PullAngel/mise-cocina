@@ -5,10 +5,15 @@ import type { ImportResult, MiseRecipe } from "../types";
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 const validateSchema = ajv.compile(schema);
 
+/** Chat assistants often wrap the JSON inside the delimiters in a ```json fence. */
+function stripCodeFence(text: string): string {
+  return text.replace(/^```[a-z]*\s*/i, "").replace(/\s*```$/, "").trim();
+}
+
 function extractJson(input: string): string {
   const normalized = input.trim();
   const marked = normalized.match(/---MISE\/1---\s*([\s\S]*?)\s*---END-MISE---/i);
-  if (marked) return marked[1].trim();
+  if (marked) return stripCodeFence(marked[1].trim());
   const fenced = normalized.match(/```(?:json)?\s*([\s\S]*?)```/i);
   return (fenced?.[1] ?? normalized).trim();
 }
@@ -36,8 +41,24 @@ function semanticErrors(recipe: MiseRecipe): string[] {
 function friendlySchemaErrors(): string[] {
   return (validateSchema.errors ?? []).slice(0, 8).map(error => {
     const location = error.instancePath || "la receta";
-    return `${location}: ${error.message ?? "dato inválido"}`;
+    // Name the offending property: it is what the person pastes back to the assistant.
+    const extra = error.keyword === "additionalProperties" ? ` («${String(error.params.additionalProperty)}» no existe en el esquema; quitalo)` : "";
+    const missing = error.keyword === "required" ? ` («${String(error.params.missingProperty)}» es obligatorio)` : "";
+    return `${location}: ${error.message ?? "dato inválido"}${extra}${missing}`;
   });
+}
+
+/** Non-blocking order problems: a step that depends on a step that comes later in the list. */
+function orderWarnings(recipe: MiseRecipe): string[] {
+  const position = new Map(recipe.steps.map((step, index) => [step.id, index]));
+  const warnings: string[] = [];
+  recipe.steps.forEach((step, index) => {
+    step.dependsOn.forEach(reference => {
+      const target = position.get(reference);
+      if (target !== undefined && target >= index) warnings.push(`El paso «${step.shortLabel ?? step.action}» depende de un paso que aparece después o es él mismo; revisá el orden.`);
+    });
+  });
+  return [...new Set(warnings)];
 }
 
 export function parseRecipeInput(input: string): ImportResult {
@@ -48,7 +69,7 @@ export function parseRecipeInput(input: string): ImportResult {
     const recipe = parsed as MiseRecipe;
     const errors = semanticErrors(recipe);
     if (errors.length) return { ok: false, errors };
-    const warnings = recipe.context.uncertainties.map(item => `Pendiente: ${item}`);
+    const warnings = [...recipe.context.uncertainties.map(item => `Pendiente: ${item}`), ...orderWarnings(recipe)];
     if (!recipe.ingredients.length) warnings.push("La receta no contiene ingredientes para mostrar.");
     return { ok: true, recipe, warnings };
   } catch (error) {

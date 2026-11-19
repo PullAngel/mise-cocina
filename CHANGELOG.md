@@ -2,6 +2,19 @@
 
 Este proyecto sigue versionado semántico mientras el contrato y la aplicación maduran. Las versiones `0.x` pueden cambiar comportamiento o formato con una guía de migración.
 
+## Sin publicar
+
+### Corregido
+
+- Al abrir la aplicación ya no suenan alarmas de temporizadores vencidos: pasan a «Listo» y no se reprograman.
+- Tocar un temporizador terminado silencia su alarma y lo quita de la cinta; la cinta ordena terminados, luego en curso por vencimiento y al final pausados.
+
+### Cambiado
+
+- Contrato de entrega para IA con forma exacta del JSON, planificación previa, reglas de temporizadores y revisión final; cada perfil define su nivel de detalle.
+- Inicio agrega «Copiar pedido de entrega» para chats largos.
+- Los errores de importación nombran la propiedad exacta y se aceptan bloques JSON con marcas de código dentro de los delimitadores. Aviso si un paso depende de otro posterior.
+
 ## 0.4.1 — 2026-09-19
 
 ### Corregido

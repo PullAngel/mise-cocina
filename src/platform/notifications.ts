@@ -30,7 +30,8 @@ export async function openExactAlarmSettings(): Promise<void> {
 }
 
 export async function scheduleTimerNotification(timer: TimerState, title: string): Promise<void> {
-  if (!Capacitor.isNativePlatform() || !timer.dueAt) return;
+  // A deadline in the past would make Android fire the alarm immediately: never schedule it.
+  if (!Capacitor.isNativePlatform() || !timer.dueAt || timer.dueAt <= Date.now()) return;
   try {
     await LocalNotifications.cancel({ notifications: [{ id: timer.notificationId }] });
     await LocalNotifications.schedule({
@@ -52,6 +53,13 @@ export async function scheduleTimerNotification(timer: TimerState, title: string
 export async function cancelTimerNotification(notificationId: number): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   try { await LocalNotifications.cancel({ notifications: [{ id: notificationId }] }); } catch { /* No pending alarm. */ }
+}
+
+/** Cancels any pending alarm and removes a delivered one, which also stops its sound. */
+export async function silenceTimerNotification(notificationId: number): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  try { await LocalNotifications.cancel({ notifications: [{ id: notificationId }] }); } catch { /* No pending alarm. */ }
+  try { await LocalNotifications.removeDeliveredNotificationsById({ ids: [notificationId] }); } catch { /* Nothing delivered. */ }
 }
 
 export async function configureNotificationChannel(): Promise<void> {
