@@ -833,3 +833,15 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
   .choice-options button { min-height: 48px; }
   .drop-zone { min-height: 92px; margin-top: 7px; }
 }
+
+/* Recorrido de primera vez: resalta la pantalla real. */
+.tour-layer { position: fixed; z-index: 200; inset: 0; }
+.tour-spot { position: fixed; border: 3px solid var(--ember); border-radius: 22px; box-shadow: 0 0 0 100vmax rgba(10, 13, 12, .78); pointer-events: none; transition: top .2s ease, left .2s ease, width .2s ease, height .2s ease; }
+.tour-card { position: fixed; left: 50%; width: min(420px, calc(100vw - 24px)); padding: 16px 18px; transform: translateX(-50%); border: 3px solid var(--pulp-shadow); border-radius: 18px; color: var(--pulp-navy); background: var(--cream); box-shadow: 6px 6px 0 var(--pulp-shadow); }
+.tour-card.top { top: max(12px, env(safe-area-inset-top)); }
+.tour-card.bottom { bottom: max(12px, env(safe-area-inset-bottom)); }
+.tour-card .eyebrow { margin-bottom: 4px; color: var(--ember-ink); font-size: 12px; }
+.tour-card h2 { margin: 0 0 6px; font-size: 26px; line-height: 1; }
+.tour-card p:not(.eyebrow) { margin: 0 0 12px; font-size: 13px; line-height: 1.45; }
+.tour-actions { display: flex; gap: 8px; }
+.tour-actions button { flex: 1; }

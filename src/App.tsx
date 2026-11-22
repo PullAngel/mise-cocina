@@ -83,6 +83,58 @@ function stepSummary(step: RecipeStep): string {
   return step.action.replace(/[.!?]+$/, "");
 }
 
+const TOUR_KEY = "mise-home-tour";
+const tourSteps = [
+  { target: "preloaded", title: "Cociná algo ya", text: "Estas recetas funcionan sin internet y sin IA. Tocá una para empezar." },
+  { target: "prepare", title: "Preparar IA", text: "Para tener recetas propias: copiás el prompt, lo pegás en tu IA y ella te las devuelve en formato Mise." },
+  { target: "open", title: "Abrir receta", text: "Acá entra lo que te dio la IA: un archivo .mise.json, compartido desde Android o pegado como bloque." },
+  { target: "recents", title: "Recientes", text: "Tus últimas recetas quedan acá para volver a cocinarlas." }
+];
+
+function tourSeen(): boolean {
+  try { return localStorage.getItem(TOUR_KEY) === "done"; } catch { return false; }
+}
+function markTourSeen() {
+  try { localStorage.setItem(TOUR_KEY, "done"); } catch { /* sin almacenamiento: el recorrido volverá a aparecer */ }
+}
+
+function HomeTour({ onClose }: { onClose: () => void }) {
+  const [steps, setSteps] = useState<typeof tourSteps | null>(null);
+  const [index, setIndex] = useState(0);
+  const [rect, setRect] = useState<DOMRect | null>(null);
+  const step = steps?.[index];
+
+  useEffect(() => { setSteps(tourSteps.filter(item => document.querySelector(`[data-tour="${item.target}"]`))); }, []);
+
+  useEffect(() => {
+    if (!steps) return;
+    if (!step) { onClose(); return; }
+    const target = document.querySelector(`[data-tour="${step.target}"]`);
+    if (!target) return;
+    const measure = () => setRect(target.getBoundingClientRect());
+    target.scrollIntoView({ block: "start", behavior: "auto" });
+    measure();
+    const settle = window.setTimeout(measure, 120);
+    window.addEventListener("resize", measure);
+    window.addEventListener("scroll", measure, true);
+    return () => { window.clearTimeout(settle); window.removeEventListener("resize", measure); window.removeEventListener("scroll", measure, true); };
+  }, [steps, step, onClose]);
+
+  if (!steps || !step || !rect) return null;
+  const top = Math.max(0, rect.top), bottom = Math.min(window.innerHeight, rect.bottom);
+  const cardOnTop = (top + bottom) / 2 > window.innerHeight / 2;
+  const last = index === steps.length - 1;
+  return <div className="tour-layer" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+    <div className="tour-spot" style={{ top: rect.top - 6, left: rect.left - 6, width: rect.width + 12, height: rect.height + 12 }} />
+    <section className={`tour-card ${cardOnTop ? "top" : "bottom"}`}>
+      <p className="eyebrow">{index + 1} de {steps.length}</p>
+      <h2 id="tour-title">{step.title}</h2>
+      <p>{step.text}</p>
+      <div className="tour-actions"><button className="ghost" onClick={onClose}>Saltar</button><button className="primary" onClick={() => last ? onClose() : setIndex(index + 1)}>{last ? "Listo" : "Siguiente"}</button></div>
+    </section>
+  </div>;
+}
+
 function ChoiceGroup<T extends string>({ legend, options, value, onChange }: { legend: string; options: ChoiceOption<T>[]; value: string; onChange: (value: T) => void }) {
   return <fieldset className="choice-group"><legend>{legend}</legend><div className="choice-options" role="radiogroup" aria-label={legend}>{options.map(option => <button type="button" role="radio" aria-checked={value === option.value} className={value === option.value ? "selected" : ""} key={option.value} onClick={() => onChange(option.value)}><b>{option.label}</b><span>{option.hint}</span></button>)}</div></fieldset>;
 }
@@ -95,6 +147,8 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   const [kitMode, setKitMode] = useState<"new" | "existing">("new");
   const [answers, setAnswers] = useState<ChefAnswers>({ experience: "intermedio", priority: "practical", initiative: "proponé y decidimos" });
   const [notice, setNotice] = useState<string>();
+  const [tourOpen, setTourOpen] = useState(() => !tourSeen());
+  const closeTour = useCallback(() => { markTourSeen(); setTourOpen(false); }, []);
   const profile = answers.priority;
   const prompt = kitMode === "existing" ? buildAdapterPrompt() : buildChefPrompt(profile, answers);
   const suggestsCalm = answers.experience === "principiante" && answers.initiative === "guiame";
@@ -159,12 +213,12 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   };
 
   return <main className="home-shell">
-    <header className="home-header"><span className="brand"><i /><b>Mise</b></span><div><h1>¿Qué vas a cocinar?</h1><p>Cociná una receta precargada o pedile una a tu IA.</p></div></header>
+    <header className="home-header"><span className="brand"><i /><b>Mise</b></span><div><h1>¿Qué vas a cocinar?</h1><p>Cociná una receta precargada o pedile una a tu IA.</p></div><button className="home-help" onClick={() => setTourOpen(true)}>Cómo funciona</button></header>
     <section className="preloaded-panel" data-tour="preloaded"><div className="preloaded-heading"><div><p className="eyebrow">Sin internet · sin IA</p><h2>Cocinar algo ya</h2></div><span>{preloadedRecipes.length} recetas offline</span></div><div className="preloaded-list">{preloadedRecipes.map((item, index) => <button key={item.recipeId} onClick={() => onRecipe(item, [])}><i>{String(index + 1).padStart(2, "0")}</i><b>{item.title}</b><span>{item.servings.count}p · {item.steps.length} pasos</span></button>)}</div></section>
     <div className="home-actions">
-    <section className="setup-card" data-tour="prepare">
-      <div className="card-heading"><p className="eyebrow">Preparar IA</p><h2>Dale a tu IA el formato de Mise</h2><p>Funciona con ChatGPT, Claude, Gemini o la que uses.</p></div>
-      <ol className="handoff-steps"><li><b>Copiá</b> el prompt.</li><li><b>Pegalo</b> en tu IA y adjuntá el esquema.</li><li><b>Pedile</b> la receta. Al final decile «Pasala a Mise» y abrí el archivo acá.</li></ol>
+    <section className="setup-card">
+      <div className="tour-target" data-tour="prepare"><div className="card-heading"><p className="eyebrow">Preparar IA</p><h2>Dale a tu IA el formato de Mise</h2><p>Funciona con ChatGPT, Claude, Gemini o la que uses.</p></div>
+      <ol className="handoff-steps"><li><b>Copiá</b> el prompt.</li><li><b>Pegalo</b> en tu IA y adjuntá el esquema.</li><li><b>Pedile</b> la receta. Al final decile «Pasala a Mise» y abrí el archivo acá.</li></ol></div>
       <div className="mode-switch"><button className={kitMode === "new" ? "active" : ""} onClick={() => setKitMode("new")}>Crear mi Chef</button><button className={kitMode === "existing" ? "active" : ""} onClick={() => setKitMode("existing")}>Adaptar mi chat</button></div>
       {kitMode === "new" ? <div className="chef-config">
         <ChoiceGroup legend="Experiencia en cocina" options={experienceOptions} value={answers.experience} onChange={value => answer({ experience: value })} />
@@ -184,10 +238,11 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
       </label>
       {errors.length > 0 && <div className="error-box" role="alert"><strong>Hay que corregir la entrega</strong>{errors.map(error => <span key={error}>{error}</span>)}</div>}
       <button className="paste-button" onClick={() => setPasteOpen(true)}>Pegar bloque Mise</button>
-      {recent.length > 0 && <div className="compact-recents"><h3>Recientes en este teléfono</h3>{recent.slice(0, 3).map(item => <button key={item.recipe.recipeId} onClick={() => onRecipe(item.recipe, [])}><b>{item.recipe.title}</b><span>{item.recipe.servings.count}p · {item.recipe.steps.length} pasos</span></button>)}</div>}
+      {recent.length > 0 && <div className="compact-recents" data-tour="recents"><h3>Recientes en este teléfono</h3>{recent.slice(0, 3).map(item => <button key={item.recipe.recipeId} onClick={() => onRecipe(item.recipe, [])}><b>{item.recipe.title}</b><span>{item.recipe.servings.count}p · {item.recipe.steps.length} pasos</span></button>)}</div>}
     </section>
     </div>
     {pasteOpen && <div className="paste-backdrop" role="presentation"><section className="paste-sheet" role="dialog" aria-modal="true" aria-labelledby="paste-title"><header><div><p className="eyebrow green">Importar texto</p><h2 id="paste-title">Pegá el bloque Mise</h2></div><button className="icon-button" onClick={() => setPasteOpen(false)}>×</button></header><textarea autoFocus value={text} onChange={event => { setText(event.target.value); if (errors.length) setErrors([]); }} placeholder="---MISE/1---&#10;{ ... }&#10;---END-MISE---" spellCheck={false} />{errors.length > 0 && <div className="error-box paste-errors" role="alert"><strong>No pudimos preparar esta receta</strong>{errors.slice(0, 4).map(error => <span key={error}>{error}</span>)}</div>}<footer><button className="ghost" onClick={() => { setPasteOpen(false); setErrors([]); }}>Cancelar</button><button className="primary" disabled={!text.trim()} onClick={() => accept(parseRecipeInput(text))}>Preparar la mesada</button></footer></section></div>}
+    {tourOpen && <HomeTour onClose={closeTour} />}
     {notice && <div className="home-notice" role="status">{notice}</div>}
   </main>;
 }
