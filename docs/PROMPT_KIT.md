@@ -7,16 +7,15 @@ Cada versión de Mise incluye un kit compatible con su esquema. En la versión 0
 
 ## Crear o transformar un Chef
 
-Inicio pregunta brevemente por experiencia, prioridad y nivel de iniciativa esperado. Con esas respuestas recomienda uno de cuatro perfiles, que también se pueden elegir manualmente:
+Inicio hace tres preguntas y arma el Chef combinando un bloque de instrucciones por cada respuesta (3 × 4 × 3 = 36 combinaciones posibles):
 
-- **Práctico:** resuelve rápido con lo disponible y pregunta solo lo indispensable;
-- **Explorador:** propone combinaciones, variantes y sabores menos obvios;
-- **Técnico:** enseña técnicas, señales y causas sin perder el flujo;
-- **Calmo:** guía paso a paso, reduce carga mental y anticipa preparaciones.
+- **Experiencia en cocina** (`prompts/chef-experiencia-*.txt`): Principiante, Intermedia o Avanzada. Define cuánto explicar y qué técnicas proponer.
+- **¿Qué priorizo?** (`prompts/chef-practico.txt`, `chef-explorador.txt`, `chef-tecnico.txt`, `chef-calmo.txt`): Rapidez, Sabor, Técnica o Calma. Define el foco y da nombre al Chef (Práctico, Explorador, Técnico o Calmo).
+- **¿Cuánto te guío?** (`prompts/chef-guia-*.txt`): Mucho, Normal o Poco. Define cómo conduce la conversación.
 
-Las respuestas forman una parte editable del prompt. El contrato de salida es rígido e igual para todos los perfiles: fija la forma exacta del JSON, la planificación previa, el uso de temporizadores (uno por paso) y la revisión final. Cada perfil agrega solo su **nivel de detalle**: Técnico es el más profundo, Práctico y Calmo son más breves, y Explorador es intermedio con las variantes en `context.decisions`.
+Cada bloque trae un «ajuste al pasar a Mise». Si chocan, la experiencia decide cuánto explicar y la prioridad decide en qué poner el foco. El contrato de salida es rígido e igual para todos: fija la forma exacta del JSON, la planificación previa, el uso de temporizadores (uno por paso) y la revisión final.
 
-**Pedido de entrega.** En chats largos las instrucciones iniciales se alejan. Inicio ofrece «Copiar pedido de entrega», que pega el contrato completo junto con «pasala a Mise».
+**Pedido de entrega.** En chats largos las instrucciones iniciales se alejan. Inicio ofrece «Copiar «Pasala a Mise»», que pega el contrato completo junto con «pasala a Mise».
 
 ## Adaptar un chat existente
 
