@@ -24,7 +24,7 @@ import { currentOrientation, setOrientationLocked } from "./platform/orientation
 import { configureSilentAlarmChannel, requestSilentAlarmAccess } from "./platform/silentAlerts";
 import type { ActiveSession, Component, ComponentRole, Ingredient, IngredientKind, MiseRecipe, RecentRecipe, RecipeStep, SessionClockState, TimerState } from "./types";
 import { preloadedRecipes } from "./data/preloadedRecipes";
-import { buildAdapterPrompt, buildChefPrompt, buildDeliveryPrompt, miseSchema, profileInfo, recommendProfile, type ChefAnswers, type ChefProfile } from "./lib/handoffKit";
+import { buildAdapterPrompt, buildChefPrompt, buildDeliveryPrompt, experienceOptions, initiativeOptions, miseSchema, priorityOptions, profileInfo, recommendProfile, type ChefAnswers, type ChoiceOption } from "./lib/handoffKit";
 
 type View = "import" | "review" | "cook";
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
@@ -83,6 +83,10 @@ function stepSummary(step: RecipeStep): string {
   return step.action.replace(/[.!?]+$/, "");
 }
 
+function ChoiceGroup<T extends string>({ legend, options, value, onChange }: { legend: string; options: ChoiceOption<T>[]; value: string; onChange: (value: T) => void }) {
+  return <fieldset className="choice-group"><legend>{legend}</legend><div className="choice-options" role="radiogroup" aria-label={legend}>{options.map(option => <button type="button" role="radio" aria-checked={value === option.value} className={value === option.value ? "selected" : ""} key={option.value} onClick={() => onChange(option.value)}><b>{option.label}</b><span>{option.hint}</span></button>)}</div></fieldset>;
+}
+
 function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warnings: string[]) => void; recent: RecentRecipe[] }) {
   const [text, setText] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
@@ -90,12 +94,14 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   const [pasteOpen, setPasteOpen] = useState(false);
   const [kitMode, setKitMode] = useState<"new" | "existing">("new");
   const [answers, setAnswers] = useState<ChefAnswers>({ experience: "intermedio", priority: "practical", initiative: "proponé y decidimos" });
-  const [profile, setProfile] = useState<ChefProfile>("practical");
   const [notice, setNotice] = useState<string>();
-  const recommended = recommendProfile(answers);
+  const profile = answers.priority;
   const prompt = kitMode === "existing" ? buildAdapterPrompt() : buildChefPrompt(profile, answers);
-
-  useEffect(() => { if (kitMode === "new") setProfile(recommended); }, [kitMode, recommended]);
+  const suggestsCalm = answers.experience === "principiante" && answers.initiative === "guiame";
+  const answer = (patch: Partial<ChefAnswers>) => setAnswers(previous => {
+    const next = { ...previous, ...patch };
+    return "priority" in patch ? next : { ...next, priority: recommendProfile(next) };
+  });
 
   const accept = useCallback((result: ReturnType<typeof parseRecipeInput>) => {
     if (result.ok) onRecipe(result.recipe, result.warnings);
@@ -130,7 +136,7 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   const copyPrompt = async () => {
     try {
       await copyText(prompt.trim());
-      showNotice("Prompt copiado. Pegalo una vez en ChatGPT.");
+      showNotice("Prompt copiado. Pegalo en tu IA.");
     } catch {
       showNotice("No se pudo copiar. Probá Guardar o compartir.");
     }
@@ -138,9 +144,9 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   const copyDelivery = async () => {
     try {
       await copyText(buildDeliveryPrompt());
-      showNotice("Pedido de entrega copiado. Pegalo en el chat cuando la receta esté lista.");
+      showNotice("Copiado. Pegalo en el chat cuando la receta esté lista.");
     } catch {
-      showNotice("No se pudo copiar el pedido de entrega.");
+      showNotice("No se pudo copiar.");
     }
   };
   const shareFile = async (filename: string, content: string, mimeType: string, title: string) => {
@@ -153,21 +159,23 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   };
 
   return <main className="home-shell">
-    <header className="home-header"><span className="brand"><i /><b>Mise</b></span><div><h1>¿Qué vas a cocinar?</h1><p>Abrí una receta para empezar. Si todavía no tenés una, prepará tu Chef para Mise.</p></div></header>
+    <header className="home-header"><span className="brand"><i /><b>Mise</b></span><div><h1>¿Qué vas a cocinar?</h1><p>Cociná una receta precargada o pedile una a tu IA.</p></div></header>
     <div className="home-actions">
-    <section className="setup-card">
-      <div className="card-heading"><p className="eyebrow green">2 · Preparar ChatGPT</p><h2>Tu Chef, compatible con Mise</h2></div>
+    <section className="setup-card" data-tour="prepare">
+      <div className="card-heading"><p className="eyebrow">Preparar IA</p><h2>Dale a tu IA el formato de Mise</h2><p>Funciona con ChatGPT, Claude, Gemini o la que uses.</p></div>
+      <ol className="handoff-steps"><li><b>Copiá</b> el prompt.</li><li><b>Pegalo</b> en tu IA y adjuntá el esquema.</li><li><b>Pedile</b> la receta. Al final decile «Pasala a Mise» y abrí el archivo acá.</li></ol>
       <div className="mode-switch"><button className={kitMode === "new" ? "active" : ""} onClick={() => setKitMode("new")}>Crear mi Chef</button><button className={kitMode === "existing" ? "active" : ""} onClick={() => setKitMode("existing")}>Adaptar mi chat</button></div>
       {kitMode === "new" ? <div className="chef-config">
-        <div className="chef-questions"><label>Mi experiencia<select value={answers.experience} onChange={event => setAnswers(previous => ({ ...previous, experience: event.target.value }))}><option value="principiante">Estoy aprendiendo</option><option value="intermedio">Me manejo bien</option><option value="avanzado">Tengo experiencia</option></select></label><label>Quiero que priorice<select value={answers.priority} onChange={event => setAnswers(previous => ({ ...previous, priority: event.target.value as ChefProfile }))}><option value="practical">Resolver rápido</option><option value="explorer">Explorar sabores</option><option value="technical">Aprender técnica</option><option value="calm">Cocinar con calma</option></select></label><label>Iniciativa<select value={answers.initiative} onChange={event => setAnswers(previous => ({ ...previous, initiative: event.target.value }))}><option value="proponé y decidimos">Proponé y decidimos</option><option value="guiame">Guiame bastante</option><option value="solo cuando haga falta">Intervení poco</option></select></label></div>
-        <p className="recommendation">Recomendado para vos: <b>{profileInfo[recommended].name}</b></p>
-        <div className="profile-grid">{(Object.keys(profileInfo) as ChefProfile[]).map(id => <button className={profile === id ? "selected" : ""} onClick={() => setProfile(id)} key={id}><b>{profileInfo[id].name}</b><span>{profileInfo[id].description}</span></button>)}</div>
-      </div> : <p className="adapter-copy">Conserva el tono y la memoria de tu chat culinario. Solo agrega el contrato de entrega cuando escribas «pasala a Mise».</p>}
-      <div className="kit-summary"><span>Necesitás solamente</span><b>1 prompt + mise-recipe.schema.json</b></div>
-      <div className="handoff-actions"><button className="primary" onClick={copyPrompt}>Copiar prompt</button><button className="ghost" onClick={() => shareFile(kitMode === "existing" ? "mise-adaptar-chat.txt" : `mise-chef-${profile}.txt`, prompt, "text/plain", "Guardar prompt Mise")}>Guardar o compartir prompt</button><button className="ghost" onClick={copyDelivery}>Copiar pedido de entrega</button><button className="ghost" onClick={() => shareFile("mise-recipe.schema.json", miseSchema, "application/json", "Guardar esquema Mise")}>Guardar o compartir esquema</button></div>
+        <ChoiceGroup legend="Experiencia en cocina" options={experienceOptions} value={answers.experience} onChange={value => answer({ experience: value })} />
+        <ChoiceGroup legend="¿Qué priorizo?" options={priorityOptions} value={answers.priority} onChange={value => answer({ priority: value })} />
+        <ChoiceGroup legend="¿Cuánto te guío?" options={initiativeOptions} value={answers.initiative} onChange={value => answer({ initiative: value })} />
+        <p className="recommendation">{suggestsCalm ? <>Te sugerimos <b>{profileInfo.calm.name}</b>: recién empezás y querés guía. </> : null}Chef <b>{profileInfo[profile].name}</b>: {profileInfo[profile].description}</p>
+      </div> : <p className="adapter-copy">Para un chat de cocina que ya tenés: conserva su tono y su memoria. Solo agrega el formato de entrega cuando le escribas «Pasala a Mise».</p>}
+      <div className="handoff-actions"><button className="primary" onClick={copyPrompt}>Copiar prompt</button><button className="ghost" onClick={() => shareFile("mise-recipe.schema.json", miseSchema, "application/json", "Guardar esquema Mise")}>Guardar esquema</button></div>
+      <details className="more-options"><summary>Más opciones</summary><div className="handoff-actions"><button className="ghost" onClick={() => shareFile(kitMode === "existing" ? "mise-adaptar-chat.txt" : `mise-chef-${profile}.txt`, prompt, "text/plain", "Guardar prompt Mise")}>Guardar prompt</button><button className="ghost" onClick={copyDelivery}>Copiar «Pasala a Mise»</button></div></details>
     </section>
-    <section className="load-card">
-      <div className="card-heading"><p className="eyebrow">1 · Abrir receta</p><h2>Llevála a la mesada</h2><p>Usá el archivo que te entregó ChatGPT o pegá el bloque Mise.</p></div>
+    <section className="load-card" data-tour="open">
+      <div className="card-heading"><p className="eyebrow">Abrir receta</p><h2>Llevála a la mesada</h2><p>Usá el archivo que te entregó la IA o pegá el bloque Mise.</p></div>
       <label className={`drop-zone ${dragging ? "dragging" : ""}`} onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={dropFile}>
         <input type="file" accept=".json,.mise.json,application/json" onChange={pickFile} />
         <strong>Abrir archivo .mise.json</strong>

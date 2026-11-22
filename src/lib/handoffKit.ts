@@ -16,6 +16,31 @@ export const profileInfo: Record<ChefProfile, { name: string; description: strin
   calm: { name: "Calmo", description: "Guía sin sobrecargar y anticipa el trabajo." }
 };
 
+export type ChoiceOption<T extends string = string> = { value: T; label: string; hint: string; prompt: string };
+
+export const experienceOptions: ChoiceOption[] = [
+  { value: "principiante", label: "Principiante", hint: "Recién empiezo", prompt: "principiante; explicá lo básico" },
+  { value: "intermedio", label: "Intermedia", hint: "Cocino seguido", prompt: "intermedia; no hace falta explicar lo básico" },
+  { value: "avanzado", label: "Avanzada", hint: "Cocino con soltura", prompt: "avanzada; no expliques lo obvio" }
+];
+
+export const priorityOptions: ChoiceOption<ChefProfile>[] = [
+  { value: "practical", label: "Rapidez", hint: "Resolver rápido con lo que hay", prompt: "" },
+  { value: "explorer", label: "Sabor", hint: "Probar combinaciones nuevas", prompt: "" },
+  { value: "technical", label: "Técnica", hint: "Aprender el porqué de cada paso", prompt: "" },
+  { value: "calm", label: "Calma", hint: "Pocas cosas a la vez", prompt: "" }
+];
+
+export const initiativeOptions: ChoiceOption[] = [
+  { value: "guiame", label: "Mucho", hint: "Paso a paso", prompt: "guiame paso a paso sin que yo tenga que preguntar" },
+  { value: "proponé y decidimos", label: "Normal", hint: "Propone y yo elijo", prompt: "proponé opciones y yo elijo" },
+  { value: "solo cuando haga falta", label: "Poco", hint: "Habla solo si lo pido", prompt: "intervení solo cuando te lo pida o haga falta" }
+];
+
+function promptText(options: ChoiceOption[], value: string): string {
+  return options.find(option => option.value === value)?.prompt ?? value;
+}
+
 const profilePrompts: Record<ChefProfile, string> = { practical, explorer, technical, calm };
 
 export function recommendProfile(answers: ChefAnswers): ChefProfile {
@@ -26,9 +51,9 @@ export function recommendProfile(answers: ChefAnswers): ChefProfile {
 export function buildChefPrompt(profile: ChefProfile, answers: ChefAnswers): string {
   return [
     "CONFIGURACIÓN EDITABLE DEL USUARIO",
-    `Experiencia declarada: ${answers.experience}.`,
+    `Experiencia en cocina: ${promptText(experienceOptions, answers.experience)}.`,
     `Prioridad al cocinar: ${profileInfo[profile].name}.`,
-    `Iniciativa esperada del ayudante: ${answers.initiative}.`,
+    `Cuánto guiar: ${promptText(initiativeOptions, answers.initiative)}.`,
     "Podés corregir o ampliar estas preferencias durante la conversación.",
     "",
     profilePrompts[profile].trim(),
