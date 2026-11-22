@@ -838,9 +838,9 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 /* Preparar IA: cinco pasos numerados; los dos primeros llevan sus controles adentro. */
 .setup-steps { margin: 14px 0 0; padding: 0; display: grid; gap: 14px; list-style: none; counter-reset: setup; }
 .setup-steps > li { position: relative; min-width: 0; padding-left: 40px; counter-increment: setup; }
-.setup-steps > li::before { content: counter(setup); width: 28px; height: 28px; position: absolute; left: 0; top: -2px; display: grid; place-items: center; border: 2px solid var(--pulp-shadow); border-radius: 50%; color: #23120d; background: var(--ember); font-family: var(--pulp-display); font-size: 15px; font-weight: 900; }
+.setup-steps > li::before { content: counter(setup); width: 28px; height: 28px; position: absolute; left: 0; top: 0; display: grid; place-items: center; border: 2px solid var(--pulp-shadow); border-radius: 50%; color: #23120d; background: var(--ember); font-family: var(--pulp-display); font-size: 15px; font-weight: 900; }
 .setup-steps > li:not(:last-child)::after { content: ""; width: 2px; position: absolute; left: 13px; top: 30px; bottom: -12px; background: rgba(17, 23, 25, .18); }
-.setup-steps h3 { margin: 2px 0 4px; font-family: var(--pulp-display); font-size: 17px; font-weight: 900; line-height: 1.05; text-transform: uppercase; }
+.setup-steps h3 { min-height: 28px; margin: 0 0 8px; padding-top: 5px; font-family: var(--pulp-display); font-size: 17px; font-weight: 900; line-height: 1.15; text-transform: uppercase; }
 .setup-steps p { margin: 0 0 8px; color: #3f5149; font-size: 12px; line-height: 1.45; }
 .setup-steps .mode-switch { margin: 8px 0 12px; }
 .chef-summary { margin: 2px 0 0; padding: 10px 12px; border-left: 5px solid var(--ok); border-radius: 4px 10px 10px 4px; background: var(--ok-wash); }
@@ -863,5 +863,6 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 @media (max-width: 520px) {
   /* En teléfono los controles usan todo el ancho de la tarjeta; el número queda como guía a la izquierda. */
   .setup-steps .mode-switch, .setup-steps .chef-config, .setup-steps .handoff-actions { margin-left: -40px; }
+  .setup-steps > li::after { display: none; }
   .choice-options b { font-size: 13px; overflow-wrap: anywhere; }
 }
