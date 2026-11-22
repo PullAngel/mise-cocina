@@ -749,8 +749,6 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 .home-header .brand { flex: 0 0 auto; font-size: 24px; text-transform: uppercase; }
 .home-header h1 { margin: 0; font-size: clamp(25px, 3.4vw, 42px); line-height: .9; letter-spacing: -.035em; }
 .home-header p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
-.home-header > div { flex: 1 1 auto; min-width: 0; }
-.home-help { flex: 0 0 auto; min-height: 40px; padding: 0 14px; border: 2px solid var(--pulp-ivory); border-radius: 11px; color: var(--pulp-ivory); background: transparent; font-family: var(--pulp-display); font-size: 14px; font-weight: 900; text-transform: uppercase; }
 
 .home-shell .eyebrow, .home-shell .eyebrow.green { color: var(--ember-ink); font-size: 12px; }
 .preloaded-panel, .setup-card, .load-card { min-width: 0; padding: clamp(16px, 2.2vw, 26px); border: 3px solid var(--pulp-shadow); border-radius: 20px; color: var(--pulp-navy); background: var(--cream); box-shadow: 6px 6px 0 var(--pulp-shadow); }
@@ -767,9 +765,6 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 .home-shell .ghost, .paste-button { color: var(--pulp-navy); background: var(--cream); }
 .home-shell .primary:active, .home-shell .ghost:active, .paste-button:active, .choice-options button:active, .compact-recents button:active, .preloaded-list button:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--pulp-shadow); }
 
-.handoff-steps { margin: 12px 0; padding: 0; display: grid; gap: 7px; list-style: none; counter-reset: step; }
-.handoff-steps li { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; line-height: 1.4; counter-increment: step; }
-.handoff-steps li::before { content: counter(step); flex: 0 0 22px; height: 22px; display: grid; place-items: center; border: 2px solid var(--pulp-shadow); border-radius: 50%; color: #23120d; background: var(--ember); font-family: var(--pulp-display); font-size: 13px; font-weight: 900; }
 
 .mode-switch { margin: 12px 0; padding: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; border: 2px solid var(--pulp-shadow); border-radius: 13px; background: var(--cream); }
 .mode-switch button { min-height: 44px; padding: 6px; border: 0; border-radius: 9px; color: var(--pulp-navy); background: transparent; font-family: var(--pulp-display); font-size: 14px; font-weight: 900; text-transform: uppercase; }
@@ -785,14 +780,10 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 .choice-options span { color: #526660; font-size: 11px; line-height: 1.25; }
 .choice-options button.selected { color: #fff; background: var(--ok); }
 .choice-options button.selected span { color: #e4f1e6; }
-.recommendation { margin: 4px 0 12px; color: #3f5149; font-size: 12px; line-height: 1.4; }
 .adapter-copy { margin: 0 0 12px; padding: 14px; border: 2px solid var(--pulp-shadow); border-radius: 12px; background: var(--cream); font-size: 12px; line-height: 1.5; }
 
 .handoff-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .handoff-actions button { flex: 1 1 150px; }
-.more-options { margin-top: 10px; }
-.more-options summary { padding: 6px 0; color: #3f5149; font-size: 12px; font-weight: 800; cursor: pointer; }
-.more-options .handoff-actions { margin-top: 8px; }
 
 .load-card .card-heading { padding-bottom: 11px; border-bottom: 2px solid rgba(17, 23, 25, .16); }
 .drop-zone { min-height: 116px; margin-top: 14px; border: 3px dashed var(--pulp-shadow); background: var(--pulp-ivory); }
@@ -840,8 +831,37 @@ h1, h2 { text-transform: uppercase; text-shadow: none; }
 .tour-card { position: fixed; left: 50%; width: min(420px, calc(100vw - 24px)); padding: 16px 18px; transform: translateX(-50%); border: 3px solid var(--pulp-shadow); border-radius: 18px; color: var(--pulp-navy); background: var(--cream); box-shadow: 6px 6px 0 var(--pulp-shadow); }
 .tour-card.top { top: max(12px, env(safe-area-inset-top)); }
 .tour-card.bottom { bottom: max(12px, env(safe-area-inset-bottom)); }
-.tour-card .eyebrow { margin-bottom: 4px; color: var(--ember-ink); font-size: 12px; }
 .tour-card h2 { margin: 0 0 6px; font-size: 26px; line-height: 1; }
 .tour-card p:not(.eyebrow) { margin: 0 0 12px; font-size: 13px; line-height: 1.45; }
 .tour-actions { display: flex; gap: 8px; }
-.tour-actions button { flex: 1; }
+
+/* Preparar IA: cinco pasos numerados; los dos primeros llevan sus controles adentro. */
+.setup-steps { margin: 14px 0 0; padding: 0; display: grid; gap: 14px; list-style: none; counter-reset: setup; }
+.setup-steps > li { position: relative; min-width: 0; padding-left: 40px; counter-increment: setup; }
+.setup-steps > li::before { content: counter(setup); width: 28px; height: 28px; position: absolute; left: 0; top: -2px; display: grid; place-items: center; border: 2px solid var(--pulp-shadow); border-radius: 50%; color: #23120d; background: var(--ember); font-family: var(--pulp-display); font-size: 15px; font-weight: 900; }
+.setup-steps > li:not(:last-child)::after { content: ""; width: 2px; position: absolute; left: 13px; top: 30px; bottom: -12px; background: rgba(17, 23, 25, .18); }
+.setup-steps h3 { margin: 2px 0 4px; font-family: var(--pulp-display); font-size: 17px; font-weight: 900; line-height: 1.05; text-transform: uppercase; }
+.setup-steps p { margin: 0 0 8px; color: #3f5149; font-size: 12px; line-height: 1.45; }
+.setup-steps .mode-switch { margin: 8px 0 12px; }
+.chef-summary { margin: 2px 0 0; padding: 10px 12px; border-left: 5px solid var(--ok); border-radius: 4px 10px 10px 4px; background: var(--ok-wash); }
+.setup-steps .chef-summary { color: var(--pulp-navy); }
+.adapter-copy { margin: 0; }
+.text-button { margin-top: 8px; padding: 4px 0; border: 0; color: var(--ember-ink); background: none; font-size: 12px; font-weight: 800; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+
+/* «Cómo funciona» vive al final: visible si se busca, sin competir con cocinar. */
+.home-footer { max-width: 1500px; margin: 18px auto 4px; display: flex; justify-content: center; }
+.home-help { min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; gap: 9px; border: 2px solid #3d443e; border-radius: 999px; color: var(--muted); background: transparent; font-size: 13px; font-weight: 800; }
+.home-help i { width: 22px; height: 22px; display: grid; place-items: center; border: 2px solid var(--ember); border-radius: 50%; color: var(--ember); font-family: var(--pulp-display); font-size: 13px; font-style: normal; font-weight: 900; }
+.home-help:active { color: var(--pulp-ivory); border-color: var(--pulp-ivory); }
+
+.tour-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.tour-meta .eyebrow { margin: 0; color: var(--ember-ink); font-size: 12px; }
+.tour-skip { min-height: 32px; padding: 0 4px; border: 0; color: #526660; background: none; font-size: 12px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.tour-card .primary, .tour-card .ghost { min-height: 48px; padding: 0 16px; flex: 1; border: 3px solid var(--pulp-shadow); border-radius: 13px; box-shadow: 4px 4px 0 var(--pulp-shadow); font-family: var(--pulp-display); font-size: 15px; font-weight: 900; text-transform: uppercase; }
+.tour-card .primary { color: #23120d; background: var(--ember); }
+.tour-card .ghost { color: var(--pulp-navy); background: var(--cream); }
+@media (max-width: 520px) {
+  /* En teléfono los controles usan todo el ancho de la tarjeta; el número queda como guía a la izquierda. */
+  .setup-steps .mode-switch, .setup-steps .chef-config, .setup-steps .handoff-actions { margin-left: -40px; }
+  .choice-options b { font-size: 13px; overflow-wrap: anywhere; }
+}

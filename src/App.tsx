@@ -24,7 +24,7 @@ import { currentOrientation, setOrientationLocked } from "./platform/orientation
 import { configureSilentAlarmChannel, requestSilentAlarmAccess } from "./platform/silentAlerts";
 import type { ActiveSession, Component, ComponentRole, Ingredient, IngredientKind, MiseRecipe, RecentRecipe, RecipeStep, SessionClockState, TimerState } from "./types";
 import { preloadedRecipes } from "./data/preloadedRecipes";
-import { buildAdapterPrompt, buildChefPrompt, buildDeliveryPrompt, experienceOptions, initiativeOptions, miseSchema, priorityOptions, profileInfo, recommendProfile, type ChefAnswers, type ChoiceOption } from "./lib/handoffKit";
+import { buildAdapterPrompt, buildChefPrompt, buildDeliveryPrompt, describeChef, experienceOptions, initiativeOptions, miseSchema, priorityOptions, type ChefAnswers, type ChoiceOption } from "./lib/handoffKit";
 
 type View = "import" | "review" | "cook";
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
@@ -83,54 +83,118 @@ function stepSummary(step: RecipeStep): string {
   return step.action.replace(/[.!?]+$/, "");
 }
 
-const TOUR_KEY = "mise-home-tour";
-const tourSteps = [
-  { target: "preloaded", title: "Cociná algo ya", text: "Estas recetas funcionan sin internet y sin IA. Tocá una para empezar." },
-  { target: "prepare", title: "Preparar IA", text: "Para tener recetas propias: copiás el prompt, lo pegás en tu IA y ella te las devuelve en formato Mise." },
-  { target: "open", title: "Abrir receta", text: "Acá entra lo que te dio la IA: un archivo .mise.json, compartido desde Android o pegado como bloque." },
-  { target: "recents", title: "Recientes", text: "Tus últimas recetas quedan acá para volver a cocinarlas." }
+/* Tutorial de primera vez. Cada pantalla tiene su tramo y lo muestra la primera vez que se llega a ella.
+   «Cómo funciona» en Inicio borra las tres marcas: el recorrido completo vuelve a aparecer pantalla por pantalla. */
+type TourScreen = "home" | "review" | "cook";
+type TourStep = { target: string; title: string; text: string };
+
+const tourScreens: TourScreen[] = ["home", "review", "cook"];
+const tourKey = (screen: TourScreen) => `mise-tour-${screen}`;
+
+function tourPending(screen: TourScreen): boolean {
+  try { return localStorage.getItem(tourKey(screen)) !== "done"; } catch { return false; }
+}
+function markTourDone(screen: TourScreen) {
+  try { localStorage.setItem(tourKey(screen), "done"); } catch { /* sin almacenamiento: el tramo volverá a aparecer */ }
+}
+function restartTours() {
+  try { tourScreens.forEach(screen => localStorage.removeItem(tourKey(screen))); } catch { /* sin almacenamiento */ }
+}
+
+function useTour(screen: TourScreen) {
+  const [open, setOpen] = useState(() => tourPending(screen));
+  const close = useCallback(() => { markTourDone(screen); setOpen(false); }, [screen]);
+  const show = useCallback(() => setOpen(true), []);
+  return { open, show, close };
+}
+
+const homeTourSteps: TourStep[] = [
+  { target: '[data-tour="preloaded"]', title: "Cociná algo ya", text: "Estas recetas funcionan sin internet y sin IA. Es la forma más rápida de probar Mise." },
+  { target: '[data-tour="prepare"]', title: "Preparar IA", text: "Para tener recetas propias: armás tu Chef, lo pegás en tu IA (ChatGPT, Claude, Gemini…) y te devuelve las recetas en formato Mise. Se prepara una sola vez." },
+  { target: '[data-tour="open"]', title: "Abrir receta", text: "Acá entra lo que te dio la IA: un archivo .mise.json, compartido desde Android o pegado como bloque de texto." },
+  { target: '[data-tour="recents"]', title: "Recientes", text: "Las últimas recetas que abriste quedan acá para volver a cocinarlas." },
+  { target: '[data-tour="help"]', title: "¿Te perdiste?", text: "Este botón repite el recorrido completo cuando quieras." },
+  { target: '[data-tour="preloaded"]', title: "Probalo ahora", text: "Tocá una receta precargada. Cuando llegues a la mesada y a la cocina, te mostramos cómo se usan." }
 ];
 
-function tourSeen(): boolean {
-  try { return localStorage.getItem(TOUR_KEY) === "done"; } catch { return false; }
-}
-function markTourSeen() {
-  try { localStorage.setItem(TOUR_KEY, "done"); } catch { /* sin almacenamiento: el recorrido volverá a aparecer */ }
+const reviewTourSteps: TourStep[] = [
+  { target: ".prep-servings", title: "Comensales", text: "Ajustá para cuántas personas cocinás. Todas las cantidades se recalculan solas." },
+  { target: ".prep-ingredient", title: "Ingredientes", text: "Tocá cada ingrediente que te falte. Queda marcado en rojo durante toda la receta para que no te sorprenda." },
+  { target: ".prep-route", title: "Mapa de trabajo", text: "Todos los pasos en orden. Cada color es una parte del plato: principal, salsa, guarnición…" },
+  { target: ".prep-actions .primary", title: "Entrar a la cocina", text: "Cuando tengas todo a mano, entrá. «Elegir otra» te devuelve al inicio." }
+];
+
+const cookTourSteps: TourStep[] = [
+  { target: ".recipe-step.current", title: "Cada paso", text: "Leé la acción y la señal que te dice que está listo. Doble toque en la mitad derecha: hecho. Mantené apretada la izquierda: escucharlo y más opciones." },
+  { target: ".time-ribbon", title: "Relojes", text: "El tiempo total y los relojes que estén corriendo. Siguen andando aunque cierres la app y suenan al terminar. Mantené apretado uno para pausarlo o ajustarlo." },
+  { target: ".secondary-pane", title: "Recorrido", text: "Todos los pasos para saltar a cualquiera, con cuántos llevás hechos." },
+  { target: ".jump-buttons", title: "Flechas", text: "Paso anterior o siguiente. Mantené apretado para recorrer rápido." },
+  { target: ".stage-tools .view-toggle", title: "Ingredientes", text: "Cambiá entre la receta y los ingredientes. También podés deslizar hacia los costados." },
+  { target: ".orientation-lock", title: "Girar la pantalla", text: "Girá el teléfono para ver la receta en horizontal. Este botón deja fija la vista actual." },
+  { target: ".more-button", title: "Más opciones", text: "Alarmas, pantalla completa, cerrar la receta y este tutorial, por si querés repasarlo." }
+];
+
+function visibleTarget(selector: string): HTMLElement | null {
+  const node = document.querySelector<HTMLElement>(selector);
+  if (!node) return null;
+  const rect = node.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0 ? node : null;
 }
 
-function HomeTour({ onClose }: { onClose: () => void }) {
-  const [steps, setSteps] = useState<typeof tourSteps | null>(null);
+/** Parte visible del elemento: recortada por los contenedores con scroll y por la pantalla. */
+function clippedRect(node: HTMLElement): DOMRect {
+  const own = node.getBoundingClientRect();
+  let top = own.top, left = own.left, right = own.right, bottom = own.bottom;
+  for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+    const style = getComputedStyle(parent);
+    if (!/(auto|scroll|hidden|clip)/.test(`${style.overflowX} ${style.overflowY}`)) continue;
+    const box = parent.getBoundingClientRect();
+    top = Math.max(top, box.top); left = Math.max(left, box.left); right = Math.min(right, box.right); bottom = Math.min(bottom, box.bottom);
+  }
+  top = Math.max(top, 0); left = Math.max(left, 0); right = Math.min(right, window.innerWidth); bottom = Math.min(bottom, window.innerHeight);
+  return new DOMRect(left, top, Math.max(0, right - left), Math.max(0, bottom - top));
+}
+
+function Tour({ steps: allSteps, onClose }: { steps: TourStep[]; onClose: () => void }) {
+  const [steps, setSteps] = useState<TourStep[] | null>(null);
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const step = steps?.[index];
 
-  useEffect(() => { setSteps(tourSteps.filter(item => document.querySelector(`[data-tour="${item.target}"]`))); }, []);
+  // Espera a que la pantalla termine de acomodarse y descarta lo que no existe o no se ve en este tamaño.
+  useEffect(() => {
+    const id = window.setTimeout(() => setSteps(allSteps.filter(item => visibleTarget(item.target))), 80);
+    return () => window.clearTimeout(id);
+  }, [allSteps]);
 
   useEffect(() => {
     if (!steps) return;
     if (!step) { onClose(); return; }
-    const target = document.querySelector(`[data-tour="${step.target}"]`);
+    const target = visibleTarget(step.target);
     if (!target) return;
-    const measure = () => setRect(target.getBoundingClientRect());
-    target.scrollIntoView({ block: "start", behavior: "auto" });
+    const measure = () => setRect(clippedRect(target));
+    // Solo desplaza si casi no se ve: en la cocina, mover el documento cambiaría el paso actual.
+    const visible = clippedRect(target).height;
+    if (visible < Math.min(target.getBoundingClientRect().height, window.innerHeight * .5) - 1) target.scrollIntoView({ block: "nearest", behavior: "auto" });
     measure();
     const settle = window.setTimeout(measure, 120);
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, true);
-    return () => { window.clearTimeout(settle); window.removeEventListener("resize", measure); window.removeEventListener("scroll", measure, true); };
+    window.addEventListener("keydown", onKey);
+    return () => { window.clearTimeout(settle); window.removeEventListener("resize", measure); window.removeEventListener("scroll", measure, true); window.removeEventListener("keydown", onKey); };
   }, [steps, step, onClose]);
 
   if (!steps || !step || !rect) return null;
-  const top = Math.max(0, rect.top), bottom = Math.min(window.innerHeight, rect.bottom);
-  const cardOnTop = (top + bottom) / 2 > window.innerHeight / 2;
+  const cardOnTop = (rect.top + rect.bottom) / 2 > window.innerHeight / 2;
   const last = index === steps.length - 1;
-  return <div className="tour-layer" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+  return <div className="tour-layer" role="dialog" aria-modal="true" aria-labelledby="tour-title" onPointerDown={event => event.stopPropagation()}>
     <div className="tour-spot" style={{ top: rect.top - 6, left: rect.left - 6, width: rect.width + 12, height: rect.height + 12 }} />
     <section className={`tour-card ${cardOnTop ? "top" : "bottom"}`}>
-      <p className="eyebrow">{index + 1} de {steps.length}</p>
+      <div className="tour-meta"><p className="eyebrow">{index + 1} de {steps.length}</p><button className="tour-skip" onClick={onClose}>Saltar</button></div>
       <h2 id="tour-title">{step.title}</h2>
       <p>{step.text}</p>
-      <div className="tour-actions"><button className="ghost" onClick={onClose}>Saltar</button><button className="primary" onClick={() => last ? onClose() : setIndex(index + 1)}>{last ? "Listo" : "Siguiente"}</button></div>
+      <div className="tour-actions">{index > 0 && <button className="ghost" onClick={() => setIndex(index - 1)}>Atrás</button>}<button className="primary" onClick={() => last ? onClose() : setIndex(index + 1)}>{last ? "Listo" : "Siguiente"}</button></div>
     </section>
   </div>;
 }
@@ -147,15 +211,10 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   const [kitMode, setKitMode] = useState<"new" | "existing">("new");
   const [answers, setAnswers] = useState<ChefAnswers>({ experience: "intermedio", priority: "practical", initiative: "proponé y decidimos" });
   const [notice, setNotice] = useState<string>();
-  const [tourOpen, setTourOpen] = useState(() => !tourSeen());
-  const closeTour = useCallback(() => { markTourSeen(); setTourOpen(false); }, []);
-  const profile = answers.priority;
-  const prompt = kitMode === "existing" ? buildAdapterPrompt() : buildChefPrompt(profile, answers);
-  const suggestsCalm = answers.experience === "principiante" && answers.initiative === "guiame";
-  const answer = (patch: Partial<ChefAnswers>) => setAnswers(previous => {
-    const next = { ...previous, ...patch };
-    return "priority" in patch ? next : { ...next, priority: recommendProfile(next) };
-  });
+  const tour = useTour("home");
+  const chef = describeChef(answers);
+  const prompt = kitMode === "existing" ? buildAdapterPrompt() : buildChefPrompt(answers);
+  const answer = (patch: Partial<ChefAnswers>) => setAnswers(previous => ({ ...previous, ...patch }));
 
   const accept = useCallback((result: ReturnType<typeof parseRecipeInput>) => {
     if (result.ok) onRecipe(result.recipe, result.warnings);
@@ -190,9 +249,9 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   const copyPrompt = async () => {
     try {
       await copyText(prompt.trim());
-      showNotice("Prompt copiado. Pegalo en tu IA.");
+      showNotice("Prompt copiado. Ahora pegalo en tu IA (paso 3).");
     } catch {
-      showNotice("No se pudo copiar. Probá Guardar o compartir.");
+      showNotice("No se pudo copiar. Probá guardar el prompt como archivo.");
     }
   };
   const copyDelivery = async () => {
@@ -213,21 +272,31 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
   };
 
   return <main className="home-shell">
-    <header className="home-header"><span className="brand"><i /><b>Mise</b></span><div><h1>¿Qué vas a cocinar?</h1><p>Cociná una receta precargada o pedile una a tu IA.</p></div><button className="home-help" onClick={() => setTourOpen(true)}>Cómo funciona</button></header>
+    <header className="home-header"><span className="brand"><i /><b>Mise</b></span><div><h1>¿Qué vas a cocinar?</h1><p>Cociná una receta precargada o pedile una a tu IA.</p></div></header>
     <section className="preloaded-panel" data-tour="preloaded"><div className="preloaded-heading"><div><p className="eyebrow">Sin internet · sin IA</p><h2>Cocinar algo ya</h2></div><span>{preloadedRecipes.length} recetas offline</span></div><div className="preloaded-list">{preloadedRecipes.map((item, index) => <button key={item.recipeId} onClick={() => onRecipe(item, [])}><i>{String(index + 1).padStart(2, "0")}</i><b>{item.title}</b><span>{item.servings.count}p · {item.steps.length} pasos</span></button>)}</div></section>
     <div className="home-actions">
     <section className="setup-card">
-      <div className="tour-target" data-tour="prepare"><div className="card-heading"><p className="eyebrow">Preparar IA</p><h2>Dale a tu IA el formato de Mise</h2><p>Funciona con ChatGPT, Claude, Gemini o la que uses.</p></div>
-      <ol className="handoff-steps"><li><b>Copiá</b> el prompt.</li><li><b>Pegalo</b> en tu IA y adjuntá el esquema.</li><li><b>Pedile</b> la receta. Al final decile «Pasala a Mise» y abrí el archivo acá.</li></ol></div>
-      <div className="mode-switch"><button className={kitMode === "new" ? "active" : ""} onClick={() => setKitMode("new")}>Crear mi Chef</button><button className={kitMode === "existing" ? "active" : ""} onClick={() => setKitMode("existing")}>Adaptar mi chat</button></div>
-      {kitMode === "new" ? <div className="chef-config">
-        <ChoiceGroup legend="Experiencia en cocina" options={experienceOptions} value={answers.experience} onChange={value => answer({ experience: value })} />
-        <ChoiceGroup legend="¿Qué priorizo?" options={priorityOptions} value={answers.priority} onChange={value => answer({ priority: value })} />
-        <ChoiceGroup legend="¿Cuánto te guío?" options={initiativeOptions} value={answers.initiative} onChange={value => answer({ initiative: value })} />
-        <p className="recommendation">{suggestsCalm ? <>Te sugerimos <b>{profileInfo.calm.name}</b>: recién empezás y querés guía. </> : null}Chef <b>{profileInfo[profile].name}</b>: {profileInfo[profile].description}</p>
-      </div> : <p className="adapter-copy">Para un chat de cocina que ya tenés: conserva su tono y su memoria. Solo agrega el formato de entrega cuando le escribas «Pasala a Mise».</p>}
-      <div className="handoff-actions"><button className="primary" onClick={copyPrompt}>Copiar prompt</button><button className="ghost" onClick={() => shareFile("mise-recipe.schema.json", miseSchema, "application/json", "Guardar esquema Mise")}>Guardar esquema</button></div>
-      <details className="more-options"><summary>Más opciones</summary><div className="handoff-actions"><button className="ghost" onClick={() => shareFile(kitMode === "existing" ? "mise-adaptar-chat.txt" : `mise-chef-${profile}.txt`, prompt, "text/plain", "Guardar prompt Mise")}>Guardar prompt</button><button className="ghost" onClick={copyDelivery}>Copiar «Pasala a Mise»</button></div></details>
+      <div className="card-heading" data-tour="prepare"><p className="eyebrow">Preparar IA</p><h2>Tu Chef en cualquier IA</h2><p>ChatGPT, Claude, Gemini o la que uses. Lo preparás una vez y después solo le pedís recetas.</p></div>
+      <ol className="setup-steps">
+        <li><h3>Elegí cómo querés tu Chef</h3>
+          <div className="mode-switch"><button className={kitMode === "new" ? "active" : ""} onClick={() => setKitMode("new")}>Chef nuevo</button><button className={kitMode === "existing" ? "active" : ""} onClick={() => setKitMode("existing")}>Ya tengo un chat</button></div>
+          {kitMode === "new" ? <div className="chef-config">
+            <ChoiceGroup legend="Experiencia en cocina" options={experienceOptions} value={answers.experience} onChange={value => answer({ experience: value })} />
+            <ChoiceGroup legend="¿Qué priorizo?" options={priorityOptions} value={answers.priority} onChange={value => answer({ priority: value })} />
+            <ChoiceGroup legend="¿Cuánto te guío?" options={initiativeOptions} value={answers.initiative} onChange={value => answer({ initiative: value })} />
+            <p className="chef-summary"><b>Tu Chef: {chef.name}.</b> {chef.summary}</p>
+          </div> : <p className="adapter-copy">Para cuando ya tenés un chat de cocina con tu IA: conserva su tono y lo que ya sabe de vos. Solo le enseña a entregar las recetas en formato Mise.</p>}
+        </li>
+        <li><h3>Copiá el prompt y guardá el esquema</h3><p>El esquema es el archivo <b>mise-recipe.schema.json</b>: le enseña a tu IA el formato de Mise.</p>
+          <div className="handoff-actions"><button className="primary" onClick={copyPrompt}>Copiar prompt</button><button className="ghost" onClick={() => shareFile("mise-recipe.schema.json", miseSchema, "application/json", "Guardar esquema Mise")}>Guardar esquema</button></div>
+          <button className="text-button" onClick={() => shareFile(kitMode === "existing" ? "mise-adaptar-chat.txt" : chef.filename, prompt, "text/plain", "Guardar prompt Mise")}>o guardá el prompt como archivo</button>
+        </li>
+        <li><h3>Pasáselos a tu IA</h3><p>{kitMode === "existing" ? "En tu chat de cocina" : "En un chat nuevo"}, pegá el prompt y adjuntá el archivo del esquema.</p></li>
+        <li><h3>Contale qué querés cocinar</h3><p>O qué tenés en la heladera. Charlen la receta hasta que te convenza.</p></li>
+        <li><h3>Escribile «Pasala a Mise»</h3><p>Te devuelve un archivo <b>.mise.json</b> o un bloque de texto. Abrilo o pegalo en <b>Abrir receta</b>.</p>
+          <button className="text-button" onClick={copyDelivery}>¿El chat es muy largo? Copiá «Pasala a Mise» con el formato completo</button>
+        </li>
+      </ol>
     </section>
     <section className="load-card" data-tour="open">
       <div className="card-heading"><p className="eyebrow">Abrir receta</p><h2>Llevála a la mesada</h2><p>Usá el archivo que te entregó la IA o pegá el bloque Mise.</p></div>
@@ -242,7 +311,8 @@ function ImportView({ onRecipe, recent }: { onRecipe: (recipe: MiseRecipe, warni
     </section>
     </div>
     {pasteOpen && <div className="paste-backdrop" role="presentation"><section className="paste-sheet" role="dialog" aria-modal="true" aria-labelledby="paste-title"><header><div><p className="eyebrow green">Importar texto</p><h2 id="paste-title">Pegá el bloque Mise</h2></div><button className="icon-button" onClick={() => setPasteOpen(false)}>×</button></header><textarea autoFocus value={text} onChange={event => { setText(event.target.value); if (errors.length) setErrors([]); }} placeholder="---MISE/1---&#10;{ ... }&#10;---END-MISE---" spellCheck={false} />{errors.length > 0 && <div className="error-box paste-errors" role="alert"><strong>No pudimos preparar esta receta</strong>{errors.slice(0, 4).map(error => <span key={error}>{error}</span>)}</div>}<footer><button className="ghost" onClick={() => { setPasteOpen(false); setErrors([]); }}>Cancelar</button><button className="primary" disabled={!text.trim()} onClick={() => accept(parseRecipeInput(text))}>Preparar la mesada</button></footer></section></div>}
-    {tourOpen && <HomeTour onClose={closeTour} />}
+    <footer className="home-footer"><button className="home-help" data-tour="help" onClick={() => { restartTours(); tour.show(); }}><i aria-hidden="true">?</i>Cómo funciona Mise</button></footer>
+    {tour.open && <Tour steps={homeTourSteps} onClose={tour.close} />}
     {notice && <div className="home-notice" role="status">{notice}</div>}
   </main>;
 }
@@ -276,6 +346,7 @@ function ReviewView({ recipe, warnings, onBack, onStart }: { recipe: MiseRecipe;
   const [servings, setServings] = useState(recipe.servings.count);
   const [missingIds, setMissingIds] = useState<string[]>([]);
   const toggleMissing = (id: string) => setMissingIds(previous => previous.includes(id) ? previous.filter(item => item !== id) : [...previous, id]);
+  const tour = useTour("review");
   return <main className="prep-page">
     <section className="prep-scroll">
       <header className="prep-hero"><div><p className="eyebrow green">Preparar la mesada · revisión {recipe.revision}</p><h1>{recipe.title}</h1><p>{recipe.context.goal}</p></div><div className="prep-servings"><span>Comensales</span><strong>{servings}</strong><div><button onClick={() => setServings(Math.max(1, servings - 1))}>−</button><button onClick={() => setServings(Math.min(12, servings + 1))}>+</button></div></div></header>
@@ -286,6 +357,7 @@ function ReviewView({ recipe, warnings, onBack, onStart }: { recipe: MiseRecipe;
       </div>
     </section>
     <footer className="prep-actions"><button className="ghost" onClick={onBack}>Elegir otra</button><div><span>{missingIds.length ? `${missingIds.length} ingredientes faltantes` : "Mesada lista"}</span><button className="primary" onClick={() => onStart(servings, missingIds)}>Entrar a la cocina</button></div></footer>
+    {tour.open && <Tour steps={reviewTourSteps} onClose={tour.close} />}
   </main>;
 }
 
@@ -402,6 +474,13 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
   const [showGestureHint, setShowGestureHint] = useState(false);
   const [reader, setReader] = useState({ active: false, playing: false, stepIndex: 0 });
   const [showOrientationHint, setShowOrientationHint] = useState(() => localStorage.getItem("mise-orientation-hint") !== "seen");
+  const tour = useTour("cook");
+  // El tutorial ya explica gestos y giro: los avisos sueltos dejan de hacer falta.
+  const closeCookTour = useCallback(() => {
+    tour.close();
+    try { localStorage.setItem("mise-card-gesture-hint", "seen"); localStorage.setItem("mise-orientation-hint", "seen"); } catch { /* sin almacenamiento */ }
+    setShowOrientationHint(false);
+  }, [tour.close]);
   const mainRef = useRef<HTMLDivElement>(null);
   const scrollTimer = useRef<number | undefined>(undefined);
   const suppressScroll = useRef(false);
@@ -800,11 +879,12 @@ function CookView({ session, setSession, onFinish, installEvent }: { session: Ac
     </main>}
     <nav className="stage-tools" aria-label="Herramientas de la cocina"><button className="view-toggle" onClick={() => setTab(tab === "recipe" ? "ingredients" : "recipe")}>{tab === "recipe" ? `Ingredientes · ${session.servings}p` : "Receta"}</button><div className="orientation-control"><button className={`orientation-lock ${session.orientationLocked ? "locked" : ""} ${orientationPulse ? "pulse" : ""}`} onClick={() => { toggleOrientation(); localStorage.setItem("mise-orientation-hint", "seen"); setShowOrientationHint(false); }} aria-pressed={session.orientationLocked} aria-label={session.orientationLocked ? "Desbloquear orientación automática" : `Bloquear vista ${currentOrientation()}`}><OrientationIcon locked={Boolean(session.orientationLocked)} /></button>{showOrientationHint && <span className="orientation-label">Giro automático</span>}</div><button className="more-button" onClick={() => setSheet("options")} aria-label="Más opciones">•••</button></nav>
     </div>
-    {sheet === "options" && <Sheet onClose={() => setSheet(null)} labelledBy="options-title"><div className="sheet-heading"><div><p className="eyebrow green">Fuera del flujo principal</p><h2 id="options-title">Opciones</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="option-list"><button onClick={() => enterKitchenDisplay()}>Pantalla completa <span>Oculta controles del navegador</span></button><button onClick={() => setSheet("alerts")}>Alarmas y sonido <span>{readiness === "native-ready" ? "Alarmas exactas listas" : "Requiere configuración"} · {silentReady ? "pueden atravesar No molestar" : "respetan el modo silencio"}</span></button>{installEvent && <button onClick={() => installEvent.prompt()}>Instalar aplicación <span>Usar sin barras del navegador</span></button>}<button className="quiet-danger" onClick={onFinish}>Cerrar receta actual <span>Borra esta única sesión del teléfono</span></button></div></Sheet>}
+    {sheet === "options" && <Sheet onClose={() => setSheet(null)} labelledBy="options-title"><div className="sheet-heading"><div><p className="eyebrow green">Fuera del flujo principal</p><h2 id="options-title">Opciones</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="option-list"><button onClick={() => enterKitchenDisplay()}>Pantalla completa <span>Oculta controles del navegador</span></button><button onClick={() => setSheet("alerts")}>Alarmas y sonido <span>{readiness === "native-ready" ? "Alarmas exactas listas" : "Requiere configuración"} · {silentReady ? "pueden atravesar No molestar" : "respetan el modo silencio"}</span></button>{installEvent && <button onClick={() => installEvent.prompt()}>Instalar aplicación <span>Usar sin barras del navegador</span></button>}<button onClick={() => { setSheet(null); setTab("recipe"); tour.show(); }}>Cómo funciona <span>Repasa los controles de esta pantalla</span></button><button className="quiet-danger" onClick={onFinish}>Cerrar receta actual <span>Borra esta única sesión del teléfono</span></button></div></Sheet>}
     {sheet === "alerts" && <Sheet onClose={() => setSheet(null)} labelledBy="alerts-title"><div className="sheet-heading"><div><p className="eyebrow green">Configuración del teléfono</p><h2 id="alerts-title">Alarmas persistentes</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><p>Los relojes se recuperan siempre. Estos permisos permiten que además avisen fuera de Mise.</p><div className="permission-list"><button onClick={setUpAlerts}><b>{readiness === "native-ready" ? "✓" : "1"}</b><span><strong>Notificaciones y hora exacta</strong><small>Para avisar con la aplicación cerrada.</small></span></button><button onClick={async () => { await requestSilentAlarmAccess(); }}><b>{silentReady ? "✓" : "2"}</b><span><strong>Sonar en silencio o No molestar</strong><small>Android mostrará un permiso especial. El volumen de alarmas sigue bajo tu control.</small></span></button></div></Sheet>}
     {sheet === "step" && sheetStep && <Sheet onClose={() => setSheet(null)} labelledBy="step-options-title"><div className="sheet-heading"><div><p className="eyebrow green">Paso {String(recipe.steps.indexOf(sheetStep) + 1).padStart(2, "0")}</p><h2 id="step-options-title">{stepSummary(sheetStep)}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="option-list"><button onClick={() => speak(readerText(recipe.steps.indexOf(sheetStep)), recipe.locale, `mise-step-${sheetStep.id}`)}>Escuchar este paso <span>Lee solo esta acción y su señal de punto.</span></button><button onClick={() => { void playReaderStep(recipe.steps.indexOf(sheetStep)); setSheet(null); }}>Leer desde aquí <span>Continúa con los pasos siguientes.</span></button><button onClick={() => { setTab("ingredients"); setSheet(null); }}>Ver ingredientes <span>Abre cantidades totales y por estación.</span></button>{sheetTimer && <button onClick={() => openTimerSheet(sheetStep.id)}>Controlar temporizador <span>{formatDuration(remainingMs(sheetTimer, now))}</span></button>}<button onClick={() => { toggleDone(sheetStep.id); setSheet(null); }}>{session.completedStepIds.includes(sheetStep.id) ? "Cambiar a pendiente" : "Cambiar a hecho"}<span>No mueve el documento.</span></button></div></Sheet>}
     {sheet === "timer" && sheetStep && sheetTimer && <Sheet onClose={() => setSheet(null)} labelledBy="timer-options-title"><div className="sheet-heading"><div><p className="eyebrow green">{sheetStep.timer?.label ?? "Temporizador"}</p><h2 id="timer-options-title">{formatDuration(remainingMs(sheetTimer, now))}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="timer-sheet-actions"><button onClick={() => applyTimerChange(sheetStep.id, isRunning(sheetTimer) ? pauseTimer(sheetTimer) : startTimer(sheetTimer))}>{isRunning(sheetTimer) ? "Pausar" : isFinished(sheetTimer, now) ? "Reiniciar" : "Continuar"}</button><button onClick={() => applyTimerChange(sheetStep.id, addTime(sheetTimer, 30_000))}>+30 s</button><button onClick={() => applyTimerChange(sheetStep.id, addTime(sheetTimer, -30_000))}>−30 s</button><button onClick={() => applyTimerChange(sheetStep.id, startTimer(resetTimer(sheetTimer)))}>Reiniciar</button><button onClick={() => { applyTimerChange(sheetStep.id, resetTimer(sheetTimer)); setSheet(null); }}>Cancelar</button><button onClick={() => { scrollTo(recipe.steps.indexOf(sheetStep)); setSheet(null); }}>Volver al paso</button></div></Sheet>}
     {sheet === "session-clock" && <Sheet onClose={() => setSheet(null)} labelledBy="session-clock-title"><div className="sheet-heading"><div><p className="eyebrow green">Total de sesión</p><h2 id="session-clock-title">{formatDuration(elapsed)}</h2></div><button className="icon-button" onClick={() => setSheet(null)}>×</button></div><div className="timer-sheet-actions"><button onClick={toggleSessionClock}>{sessionClockRunning ? "Pausar" : "Continuar"}</button><button onClick={() => adjustSessionClock(60_000)}>+1 min</button><button onClick={() => adjustSessionClock(-60_000)}>−1 min</button><button onClick={resetSessionClock}>Reiniciar</button></div></Sheet>}
+    {tour.open && <Tour steps={cookTourSteps} onClose={closeCookTour} />}
     {showGestureHint && <div className="gesture-hint" role="status"><b>Atajos de los pasos</b><span>Mantené la mitad izquierda para opciones · doble toque a la derecha para Pendiente/Hecho.</span></div>}
   </div>;
 }
