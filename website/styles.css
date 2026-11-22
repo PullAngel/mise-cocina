@@ -199,7 +199,7 @@ h1 em {
   font-size: 12px;
 }
 .mini-brand { margin-right: auto; font-family: var(--display); font-size: 20px; letter-spacing: .04em; }
-.mini-brand i { display: inline-block; width: 13px; height: 22px; margin-right: 7px; vertical-align: middle; background: var(--orange); border-radius: 7px 7px 4px 4px; transform: rotate(7deg); }
+.mini-brand i { display: inline-block; width: auto; height: 22px; aspect-ratio: 76.9 / 144; margin-right: 7px; vertical-align: middle; background: var(--orange); clip-path: polygon(79.32% 0%, 100% 69.44%, 72.82% 100%, 20.81% 88.89%, 0% 44.44%); }
 .battery { display: flex; gap: 6px; align-items: center; }
 .battery i { width: 28px; height: 14px; border: 2px solid var(--paper); border-radius: 3px; box-shadow: inset 18px 0 0 var(--teal); }
 .demo-workspace { display: grid; grid-template-columns: 31% 69%; min-height: 500px; }
