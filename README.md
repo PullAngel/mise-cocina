@@ -7,27 +7,53 @@
   [![Estado: alpha](https://img.shields.io/badge/estado-alpha-F7C943?style=flat-square&labelColor=17242A)](ROADMAP.md)
   [![Licencia: GPL-3.0-or-later](https://img.shields.io/badge/licencia-GPL--3.0--or--later-2F7651?style=flat-square&labelColor=17242A)](LICENSE)
   [![Android y PWA](https://img.shields.io/badge/plataforma-Android%20%2B%20PWA-F15B47?style=flat-square&labelColor=17242A)](docs/ANDROID.md)
-  [![Versión: 0.4.1](https://img.shields.io/badge/versión-0.4.1-F4F0DB?style=flat-square&labelColor=17242A)](https://github.com/PullAngel/mise-cocina/releases/latest)
+  [![Versión: 0.5.0](https://img.shields.io/badge/versión-0.5.0-F4F0DB?style=flat-square&labelColor=17242A)](https://github.com/PullAngel/mise-cocina/releases/latest)
 </div>
 
 ![Vista de Mise Cocina](website/assets/product-preview.png)
 
 ## Qué es
 
-Mise recibe una receta en formato `.mise.json` y la transforma en una superficie continua para cocinar. La receta puede prepararse con ChatGPT u otro LLM usando el esquema y los prompts incluidos, pero la aplicación funciona completamente en el teléfono: no exige cuenta, servidor, API key ni conexión durante la cocina.
+Mise recibe una receta en formato `.mise.json` y la transforma en una superficie continua para cocinar. La receta puede prepararse con ChatGPT, Claude, Gemini u otra IA usando el esquema y los prompts incluidos, pero la aplicación funciona completamente en el teléfono: no exige cuenta, servidor, API key ni conexión durante la cocina.
 
 - **Receta completa y desplazamiento libre.** No obliga a confirmar tarjetas para avanzar.
 - **Ingredientes conectados al flujo.** Escala porciones, marca faltantes y muestra dónde se usa cada ingrediente.
 - **Temporizadores recuperables.** Se basan en una hora de vencimiento y sobreviven a cambios de aplicación o reinicios.
 - **Señales para cocinar mejor.** Cada paso puede explicar cuándo empezar, cómo reconocer el punto y cómo rescatar un error.
 - **Interfaz para la mesada.** Tipografía visible, zonas táctiles grandes, rotación automática y bloqueo propio.
+- **Tu Chef a medida.** Tres preguntas (experiencia en cocina, qué priorizar y cuánto guiar) arman el prompt para tu IA entre 36 combinaciones.
+- **Tutorial de primera vez.** Resaltes sobre la pantalla real, saltables y repetibles desde «Cómo funciona Mise».
 - **Privacidad local.** Las recetas y el estado permanecen en el dispositivo.
+
+## Así se ve
+
+Capturas reales de la versión 0.5.0 en un Samsung Galaxy A55.
+
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/screenshots/inicio.png" alt="Pantalla de inicio con recetas precargadas y apertura de recetas"><br><sub><b>Inicio</b><br>Cocinar algo ya, o abrir la receta que te dio la IA.</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/preparar-ia.png" alt="Paso 1 de Preparar IA: tres preguntas para armar tu Chef"><br><sub><b>Preparar IA · paso 1</b><br>Tres respuestas arman tu Chef.</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/preparar-ia-pasos.png" alt="Pasos 2 a 5 de Preparar IA y botón Cómo funciona Mise"><br><sub><b>Preparar IA · pasos 2 a 5</b><br>Del prompt al archivo <code>.mise.json</code>.</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/mesada.png" alt="Preparar la mesada: comensales e ingredientes"><br><sub><b>Preparar la mesada</b><br>Porciones e ingredientes antes de empezar.</sub></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="4"><img src="docs/screenshots/cocina.png" alt="Cocinando: paso actual con ingredientes, relojes y recorrido" width="25%"><br><sub><b>Cocinar</b><br>Paso actual, ingredientes, relojes y recorrido en una sola pantalla.</sub></td>
+  </tr>
+</table>
 
 ## Probar Mise
 
-1. Descargá el [APK más reciente](https://github.com/PullAngel/mise-cocina/releases/latest).
-2. Abrí una de las recetas precargadas o importá un archivo `.mise.json`.
-3. Para preparar una receta con un asistente, usá el [kit de prompts](docs/PROMPT_KIT.md) junto con el [JSON Schema](schema/mise-recipe.schema.json).
+1. Descargá el [APK más reciente](https://github.com/PullAngel/mise-cocina/releases/latest) e instalalo (Android puede pedirte permiso para instalar desde el navegador).
+2. La primera vez, un tutorial te muestra dónde está cada cosa. Podés saltarlo y repetirlo con «Cómo funciona Mise», al final del inicio.
+3. Probá una de las recetas precargadas en **Cocinar algo ya**; funcionan sin internet.
+4. Para tus propias recetas, usá **Preparar IA**:
+   1. Respondé cómo querés tu Chef: experiencia en cocina, qué priorizar y cuánto guiar.
+   2. Copiá el prompt y guardá el esquema `mise-recipe.schema.json`.
+   3. Pegá el prompt en tu chat de ChatGPT, Claude, Gemini u otra IA y adjuntá el esquema.
+   4. Contale qué querés cocinar o qué tenés en la heladera.
+   5. Pedile «Pasala a Mise» y abrí el archivo `.mise.json` (o pegá el bloque) en **Abrir receta**.
+
+Los detalles del prompt están en el [kit de prompts](docs/PROMPT_KIT.md) y el formato en el [JSON Schema](schema/mise-recipe.schema.json).
 
 Mise está en **alpha**: sirve para pruebas cotidianas, pero todavía no es una publicación de tienda ni promete compatibilidad con todos los fabricantes Android.
 

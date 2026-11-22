@@ -62,7 +62,7 @@ Mise organiza una misma receta en cuatro capas conectadas:
 
 ## Estado
 
-La versión 0.4.1 es una **alpha para uso cotidiano y pruebas con personas cercanas**. No es una publicación de tienda. La compatibilidad Android, la accesibilidad y el comportamiento de notificaciones todavía se amplían con pruebas reales.
+La versión 0.5.0 es una **alpha para uso cotidiano y pruebas con personas cercanas**. No es una publicación de tienda. La compatibilidad Android, la accesibilidad y el comportamiento de notificaciones todavía se amplían con pruebas reales.
 
 ## Modelo abierto y sostenibilidad
 

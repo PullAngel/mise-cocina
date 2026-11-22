@@ -4,16 +4,28 @@ Este proyecto sigue versionado semántico mientras el contrato y la aplicación 
 
 ## Sin publicar
 
+## 0.5.0 — 2026-11-22
+
+### Añadido
+
+- Tutorial de primera vez con resaltes sobre la pantalla real, en tres tramos (inicio, mesada y cocina). Se puede saltar, aparece una vez por pantalla y se repite desde «Cómo funciona Mise» o desde Más opciones en la cocina.
+- Preparar IA en cinco pasos numerados, para ChatGPT, Claude, Gemini u otra IA.
+- 36 Chefs: experiencia en cocina, prioridad y nivel de guía suman cada uno su propio bloque de instrucciones al prompt (`prompts/chef-experiencia-*.txt`, `prompts/chef-guia-*.txt`), y la pantalla resume el resultado en una frase.
+- Capturas reales del teléfono en `docs/screenshots/`.
+
+### Cambiado
+
+- Inicio: «Cocinar algo ya» va primero; botones con un solo lenguaje visual (naranja principal, crema secundario, verde para estados), colores definidos como variables y textos de al menos 11 px.
+- Las preguntas del Chef usan botones con aclaración en lugar de menús: «Experiencia en cocina», «¿Qué priorizo?» y «¿Cuánto te guío?».
+- Nuevo ícono y pantalla de carga con la marca de Mise.
+- Contrato de entrega para IA con forma exacta del JSON, planificación previa, reglas de temporizadores y revisión final.
+- Inicio agrega «Copiar «Pasala a Mise»» para chats largos.
+- Los errores de importación nombran la propiedad exacta y se aceptan bloques JSON con marcas de código dentro de los delimitadores. Aviso si un paso depende de otro posterior.
+
 ### Corregido
 
 - Al abrir la aplicación ya no suenan alarmas de temporizadores vencidos: pasan a «Listo» y no se reprograman.
 - Tocar un temporizador terminado silencia su alarma y lo quita de la cinta; la cinta ordena terminados, luego en curso por vencimiento y al final pausados.
-
-### Cambiado
-
-- Contrato de entrega para IA con forma exacta del JSON, planificación previa, reglas de temporizadores y revisión final; cada perfil define su nivel de detalle.
-- Inicio agrega «Copiar pedido de entrega» para chats largos.
-- Los errores de importación nombran la propiedad exacta y se aceptan bloques JSON con marcas de código dentro de los delimitadores. Aviso si un paso depende de otro posterior.
 
 ## 0.4.1 — 2026-09-19
 

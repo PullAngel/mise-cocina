@@ -11,7 +11,8 @@ const markdownFiles = [
   "CHANGELOG.md",
   "docs/README.md",
   "docs/PRODUCT_BRIEF.md",
-  "docs/releases/v0.4.1.md"
+  "docs/releases/v0.4.1.md",
+  "docs/releases/v0.5.0.md"
 ];
 
 const failures = [];
