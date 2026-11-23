@@ -2,7 +2,7 @@
 
 **Versión 1.0 · 2026-11-23**
 
-> **Estado del documento.** Este texto está redactado como propuesta para revisión jurídica y no constituye asesoramiento legal. Antes de darlo por definitivo deben completarse los dos datos marcados con «[COMPLETAR]»: la identificación del Titular (§1) y la ley aplicable y jurisdicción (§15).
+> **Estado del documento.** Este texto está redactado como propuesta y está pendiente de revisión jurídica; no constituye asesoramiento legal. La ley aplicable y la jurisdicción (§15) se fijaron según el domicilio del Titular y también deben revisarse.
 
 ## Resumen sin tecnicismos
 
@@ -16,7 +16,7 @@
 
 ## 1. Definiciones
 
-- **«Titular»**: [COMPLETAR: nombre completo y domicilio de la persona titular del proyecto], titular de la cuenta de GitHub `PullAngel` y del repositorio <https://github.com/PullAngel/mise-cocina>, junto con sus sucesores y cesionarios según el §12.
+- **«Titular»**: **Angel Durán**, con domicilio en Buenos Aires, Argentina, titular de la cuenta de GitHub `PullAngel` y del repositorio <https://github.com/PullAngel/mise-cocina>, junto con sus sucesores y cesionarios según el §12.
 - **«Proyecto»**: Mise Cocina, es decir, el software, el esquema, los prompts, la documentación y demás materiales del repositorio, con todas sus versiones y derivados, y los productos o servicios del Titular que se basen en ellos.
 - **«Colaborador»** o **«Vos»**: la persona que acepta este acuerdo o la entidad en cuyo nombre se acepta (§13).
 - **«Contribución»**: toda obra protegida por derechos de autor, y todo cambio sobre una obra existente (código, texto, documentación, recetas, esquemas, diseño, imágenes, traducciones, pruebas), que Vos enviás intencionalmente al Proyecto para su incorporación, por ejemplo mediante un pull request, un parche o un comentario con código. Se excluye lo que Vos marcaste expresamente y por escrito como «No es una Contribución».
@@ -127,7 +127,7 @@ Si alguna cláusula resultara inválida o inaplicable en tu jurisdicción, se in
 
 ## 15. Ley aplicable y jurisdicción
 
-[COMPLETAR: ley aplicable y tribunales competentes, definidos con asesoramiento jurídico.]
+Este acuerdo se rige por las leyes de la República Argentina. Para cualquier controversia, las partes se someten a los tribunales competentes de Buenos Aires, Argentina, domicilio del Titular, sin perjuicio de las normas imperativas que resulten aplicables en la jurisdicción de la persona colaboradora.
 
 ## 16. Versiones de este acuerdo
 

@@ -125,9 +125,6 @@ El contrato canónico es `mise.recipe` 1.2. Las recetas incluidas, el esquema y 
 
 ## Licencia y colaboración
 
-- **Código fuente público.** Podés leerlo, estudiarlo, modificarlo y compartir tus versiones bajo condiciones **no comerciales**, según la [PolyForm Noncommercial License 1.0.0](LICENSE).
-- **La explotación comercial está reservada al titular del proyecto**, salvo autorización expresa.
-- Es software *source-available*: **no es Open Source** en el sentido de la Open Source Initiative.
-- **Contribuciones:** son bienvenidas y requieren aceptar un [CLA](CLA.md). Las instrucciones están en [CONTRIBUTING.md](CONTRIBUTING.md).
-- Las versiones 0.4.1 y 0.5.0 se publicaron bajo GPL-3.0-or-later y conservan esa licencia. El cambio no es retroactivo: más detalles en [docs/LICENSING.md](docs/LICENSING.md).
-- El nombre y la identidad visual se rigen además por [TRADEMARKS.md](TRADEMARKS.md).
+* Código fuente público. Podés leerlo, estudiarlo, modificarlo y compartir tus versiones bajo condiciones no comerciales, según la [PolyForm Noncommercial License 1.0.0](https://github.com/PullAngel/mise-cocina/blob/main/LICENSE).
+* La explotación comercial está reservada al titular del proyecto, salvo autorización expresa.
+* Contribuciones: son bienvenidas y requieren aceptar un [CLA](https://github.com/PullAngel/mise-cocina/blob/main/CLA.md). Las instrucciones están en [CONTRIBUTING.md](https://github.com/PullAngel/mise-cocina/blob/main/CONTRIBUTING.md).

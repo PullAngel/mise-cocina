@@ -6,7 +6,7 @@ Documento para quien mantiene el proyecto. Explica cómo se exige hoy la aceptac
 
 | Pieza | Estado |
 | --- | --- |
-| [`CLA.md`](../CLA.md) | Redactado como propuesta para revisión jurídica, con dos datos por completar |
+| [`CLA.md`](../CLA.md) | Redactado con los datos del Titular y la jurisdicción completos; pendiente de revisión jurídica |
 | Aviso y casilla de aceptación en la [plantilla de pull request](../.github/pull_request_template.md) | Activo |
 | Compuerta manual (ver abajo) | Activa: nadie fusiona un PR sin aceptación registrada |
 | Automatización con GitHub Actions | **No activa.** No se pudo probar en este repositorio, así que no se incluyó un workflow que pudiera dar falsos positivos |
@@ -96,9 +96,8 @@ Notas:
 
 ## Pendientes que requieren intervención manual
 
-- Completar en [`CLA.md`](../CLA.md) la identificación del Titular (§1) y la ley aplicable y jurisdicción (§15).
 - Probar y activar la automatización de la opción A, y recién entonces exigir su check en la protección de `main`.
-- Hacer revisar el CLA y la transición de licencia por un profesional (ver la sección siguiente).
+- Hacer revisar el CLA, la ley aplicable y la jurisdicción (§15, fijadas según el domicilio del Titular) y la transición de licencia por un profesional (ver la sección siguiente).
 
 ## Límites jurídicos para revisar con un profesional
 
