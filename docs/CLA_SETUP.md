@@ -16,7 +16,7 @@ Documento para quien mantiene el proyecto. Explica cómo se exige hoy la aceptac
 
 1. La persona que contribuye comenta en el pull request, con exactamente estas palabras: **Leí el CLA de Mise Cocina y lo acepto.** La frase está definida en [`CLA.md`, §10](../CLA.md#10-cómo-se-acepta-y-cómo-se-registra) y debe ser idéntica.
 2. Quien mantiene el proyecto comprueba que el comentario existe, que lo escribió el autor del PR y que está en el propio PR. Ese comentario, con usuario, fecha y hora, **es el registro de la aceptación**.
-3. Etiqueta el PR como `cla: firmado` (creá las etiquetas `cla: pendiente` y `cla: firmado` en *Issues → Labels*) y recién entonces lo revisa para fusionar.
+3. Etiqueta el PR como `cla: firmado` (las etiquetas `cla: pendiente` y `cla: firmado` ya existen en el repositorio) y recién entonces lo revisa para fusionar.
 4. Si el PR tiene commits de varias personas, todas deben aceptar.
 5. Las siguientes contribuciones de la misma persona quedan cubiertas mientras no cambie la versión del CLA, pero conviene etiquetarlas igual al revisarlas.
 
@@ -97,7 +97,6 @@ Notas:
 ## Pendientes que requieren intervención manual
 
 - Completar en [`CLA.md`](../CLA.md) la identificación del Titular (§1) y la ley aplicable y jurisdicción (§15).
-- Crear las etiquetas `cla: pendiente` y `cla: firmado`.
 - Probar y activar la automatización de la opción A, y recién entonces exigir su check en la protección de `main`.
 - Hacer revisar el CLA y la transición de licencia por un profesional (ver la sección siguiente).
 
