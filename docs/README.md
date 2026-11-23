@@ -25,6 +25,12 @@ Esta carpeta describe el producto que se implementa. Ante una contradicción, ma
 - [`DESIGN_REVIEW_2026-09.md`](DESIGN_REVIEW_2026-09.md): registro de decisiones aprobadas.
 - [`DESIGN_DIRECTIONS.md`](DESIGN_DIRECTIONS.md): alternativas históricas; no es una especificación vigente.
 
+## Licencia y colaboración
+
+- [`LICENSING.md`](LICENSING.md): alcance de la licencia, componentes de terceros e historial (versiones publicadas bajo GPL).
+- [`CLA_SETUP.md`](CLA_SETUP.md): cómo se exige y se mantiene el acuerdo de contribuciones, y qué falta configurar en GitHub.
+- [`../LICENSE`](../LICENSE), [`../CLA.md`](../CLA.md) y [`../CONTRIBUTING.md`](../CONTRIBUTING.md): la licencia, el acuerdo y la guía para colaborar.
+
 ## Material para herramientas visuales
 
 - Brief vigente: [`../design/stitch/STITCH_BRIEF_V4.md`](../design/stitch/STITCH_BRIEF_V4.md).

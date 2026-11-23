@@ -23,7 +23,7 @@ Mise organiza una misma receta en cuatro capas conectadas:
 - Cocineros domésticos que valoran señales físicas y sensoriales más que tiempos rígidos.
 - Usuarios que necesitan ver instrucciones grandes a distancia.
 - Desarrolladores y diseñadores interesados en interfaces locales para tareas físicas.
-- Herramientas que quieran producir o consumir el formato abierto `mise.recipe`.
+- Herramientas que quieran producir o consumir el formato público `mise.recipe`.
 
 ## Diferencias
 
@@ -40,7 +40,7 @@ Mise organiza una misma receta en cuatro capas conectadas:
 
 - Importación desde archivo, texto o compartir de Android.
 - Validación mediante JSON Schema y referencias.
-- Trece recetas precargadas.
+- Doce recetas precargadas.
 - Escalado de porciones.
 - Ingredientes disponibles o faltantes.
 - Componentes del plato con lenguaje cromático.
@@ -64,9 +64,9 @@ Mise organiza una misma receta en cuatro capas conectadas:
 
 La versión 0.5.0 es una **alpha para uso cotidiano y pruebas con personas cercanas**. No es una publicación de tienda. La compatibilidad Android, la accesibilidad y el comportamiento de notificaciones todavía se amplían con pruebas reales.
 
-## Modelo abierto y sostenibilidad
+## Código público y sostenibilidad
 
-El núcleo se distribuye bajo GPL-3.0-or-later. El proyecto puede monetizarse en el futuro mediante distribución preparada, soporte, servicios, integraciones o trabajo a medida sin convertir el repositorio comunitario en una demostración incompleta. La identidad de marca se mantiene separada para distinguir versiones oficiales de forks.
+El código fuente es público bajo la PolyForm Noncommercial License 1.0.0: se puede estudiar, modificar y compartir sin fines comerciales. No es Open Source en el sentido de la Open Source Initiative. La explotación comercial queda reservada al titular, que podrá sostener el proyecto mediante distribución preparada, soporte, servicios, integraciones, licencias comerciales o trabajo a medida. Las contribuciones se reciben bajo un acuerdo de licencia de contribuciones (CLA). La identidad de marca se mantiene separada del código. Detalles en [docs/LICENSING.md](LICENSING.md).
 
 ## Identidad
 
@@ -76,4 +76,4 @@ El núcleo se distribuye bajo GPL-3.0-or-later. El proyecto puede monetizarse en
 - **Plataformas:** Android y PWA
 - **Tecnología:** React, TypeScript, Vite y Capacitor
 - **Contrato:** `mise.recipe` 1.2
-- **Licencia:** GPL-3.0-or-later
+- **Licencia:** PolyForm Noncommercial 1.0.0 (versiones 0.4.1 y 0.5.0, publicadas bajo GPL-3.0-or-later)

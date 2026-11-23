@@ -4,6 +4,22 @@ Este proyecto sigue versionado semántico mientras el contrato y la aplicación 
 
 ## Sin publicar
 
+### Cambiado
+
+- **Licencia del código:** de GPL-3.0-or-later a [PolyForm Noncommercial 1.0.0](LICENSE), de forma prospectiva. El código sigue siendo público y se puede estudiar, modificar y compartir sin fines comerciales; la explotación comercial queda reservada al titular. No es Open Source en el sentido de la OSI. Las versiones 0.4.1 y 0.5.0 conservan la GPL (texto en `LICENSES/GPL-3.0-or-later.txt`). Ver [docs/LICENSING.md](docs/LICENSING.md).
+- Las contribuciones requieren aceptar un [CLA](CLA.md). Guía actualizada en [CONTRIBUTING.md](CONTRIBUTING.md), con casilla en la plantilla de pull request y [documento de mantenimiento](docs/CLA_SETUP.md).
+- README: la descarga del APK pasa al principio, con pasos para personas no técnicas, y las imágenes de portada son capturas reales del teléfono en lugar de una maqueta.
+- La ficha de producto indica doce recetas precargadas, en línea con las pruebas.
+
+### Añadido
+
+- `NOTICE` con el aviso de copyright que la licencia exige conservar, y `LICENSES/` con el texto de la GPL anterior.
+- Capturas reales de los cuatro tonos del temporizador y de la cocina en horizontal en `docs/screenshots/`.
+
+### Eliminado
+
+- `website/assets/product-preview.svg`, la maqueta dibujada a mano de la que salía la imagen de portada anterior.
+
 ## 0.5.0 — 2026-11-22
 
 ### Añadido
